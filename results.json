@@ -1,15 +1,15 @@
 {
-  "last_run": "2026-05-20T15:17:03Z",
+  "last_run": "2026-05-20T15:25:02Z",
   "results": {
     "test_papers_load[chromium]": {
-      "status": "pass",
-      "message": "OK",
-      "duration_ms": 1158
+      "status": "fail",
+      "message": "page = <Page url='https://otdev1602.wpengine.com/exam-papers/'>\nbase_url = 'https://otdev1602.wpengine.com'\n\n    def test_papers_load(page: Page, base_url: str):\n        \"\"\"Paper cards render in the catalogue grid.\"\"\"\n        page.goto(f\"{base_url}{PAPERS_URL}\")\n>       expect(page.locator(\"#exam_pa",
+      "duration_ms": 5657
     },
     "test_papers_ajax_filter[chromium]": {
-      "status": "pass",
-      "message": "OK",
-      "duration_ms": 2286
+      "status": "fail",
+      "message": "page = <Page url='https://otdev1602.wpengine.com/exam-papers/'>\nbase_url = 'https://otdev1602.wpengine.com'\n\n    def test_papers_ajax_filter(page: Page, base_url: str):\n        \"\"\"Selecting a subject filter returns a non-empty result set via AJAX.\"\"\"\n        page.goto(f\"{base_url}{PAPERS_URL}\")\n    ",
+      "duration_ms": 7619
     }
   }
 }
