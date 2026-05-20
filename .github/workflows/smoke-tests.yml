@@ -8,6 +8,8 @@ on:
 jobs:
   smoke-tests:
     runs-on: ubuntu-22.04
+    permissions:
+      contents: write       # needed to commit results.json back to the repo
     steps:
       - uses: actions/checkout@v4
 
@@ -25,11 +27,16 @@ jobs:
           TEST_BASE_URL: ${{ secrets.TEST_BASE_URL }}
           TEST_CLIENT_EMAIL: ${{ secrets.TEST_CLIENT_EMAIL }}
           TEST_CLIENT_PASSWORD: ${{ secrets.TEST_CLIENT_PASSWORD }}
-        run: pytest --json-report --json-report-file=results.json -v
+        run: pytest --json-report --json-report-file=pytest-report.json -v
         continue-on-error: true
 
-      - name: Post results to live site
-        env:
-          OWL_TEST_API_KEY: ${{ secrets.OWL_TEST_API_KEY }}
-          RESULTS_ENDPOINT: ${{ secrets.RESULTS_ENDPOINT }}
-        run: python utils/reporter.py results.json
+      - name: Write results.json
+        run: python utils/reporter.py pytest-report.json
+
+      - name: Commit and push results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add results.json
+          git diff --staged --quiet || git commit -m "Test results $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          git push

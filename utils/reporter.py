@@ -1,10 +1,10 @@
 import json
 import os
 import sys
-import requests
+from datetime import datetime, timezone
 
 
-def post_results(report_path: str):
+def write_results(report_path: str):
     with open(report_path) as f:
         report = json.load(f)
 
@@ -19,23 +19,16 @@ def post_results(report_path: str):
             "duration_ms": int(call.get("duration", 0) * 1000),
         }
 
-    # Send as form-encoded POST — admin-ajax.php reads $_POST, not raw JSON body
-    payload = {
-        "action":  "owl_monitoring_results",
-        "api_key": os.environ["OWL_TEST_API_KEY"],
-        "results": json.dumps(results),
+    output = {
+        "last_run": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "results":  results,
     }
 
-    endpoint = os.environ["RESULTS_ENDPOINT"]
-    r = requests.post(endpoint, data=payload, timeout=10)
-    r.raise_for_status()
+    with open("results.json", "w") as f:
+        json.dump(output, f, indent=2)
 
-    data = r.json()
-    if not data.get("success"):
-        raise Exception(f"Endpoint error: {data.get('error', 'unknown')}")
-
-    print(f"Posted {len(results)} results → {r.status_code}")
+    print(f"Wrote {len(results)} results to results.json")
 
 
 if __name__ == "__main__":
-    post_results(sys.argv[1])
+    write_results(sys.argv[1])
