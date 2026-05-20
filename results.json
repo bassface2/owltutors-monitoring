@@ -1,0 +1,15 @@
+{
+  "last_run": "2026-05-20T15:17:03Z",
+  "results": {
+    "test_papers_load[chromium]": {
+      "status": "pass",
+      "message": "OK",
+      "duration_ms": 1158
+    },
+    "test_papers_ajax_filter[chromium]": {
+      "status": "pass",
+      "message": "OK",
+      "duration_ms": 2286
+    }
+  }
+}
