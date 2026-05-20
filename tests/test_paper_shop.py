@@ -1,15 +1,19 @@
 from playwright.sync_api import Page, expect
 
-# TODO: confirm the paper catalogue URL and CSS selectors against the live markup
+# Generic exam papers page — confirm this URL is correct before first run
+PAPERS_URL = "/exam-papers/"
+
 
 def test_papers_load(page: Page, base_url: str):
-    """Papers render on the catalogue page."""
-    page.goto(f"{base_url}/exam-papers/")
-    expect(page.locator(".paper-card")).not_to_have_count(0)
+    """Paper cards render in the catalogue grid."""
+    page.goto(f"{base_url}{PAPERS_URL}")
+    expect(page.locator("#exam_paper_links .paper-card")).not_to_have_count(0)
+
 
 def test_papers_ajax_filter(page: Page, base_url: str):
-    """Clicking a subject filter returns a non-empty result set."""
-    page.goto(f"{base_url}/exam-papers/")
-    page.locator(".filter-btn").first.click()
+    """Selecting a subject filter returns a non-empty result set via AJAX."""
+    page.goto(f"{base_url}{PAPERS_URL}")
+    # Select the second option (index 1) — index 0 is "All subjects"
+    page.locator("#paper_subject_filter").select_option(index=1)
     page.wait_for_load_state("networkidle")
-    expect(page.locator(".paper-card")).not_to_have_count(0)
+    expect(page.locator("#exam_paper_links .paper-card")).not_to_have_count(0)
