@@ -9,7 +9,7 @@ jobs:
   smoke-tests:
     runs-on: ubuntu-22.04
     permissions:
-      contents: write       # needed to commit results.json back to the repo
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
@@ -33,10 +33,21 @@ jobs:
       - name: Write results.json
         run: python utils/reporter.py pytest-report.json
 
-      - name: Commit and push results
+      - name: Push results to results branch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Set up results branch as a worktree so we never touch main
+          git fetch origin
+          if git ls-remote --exit-code origin results; then
+            git worktree add /tmp/results origin/results
+          else
+            git worktree add --orphan -b results /tmp/results
+          fi
+
+          cp results.json /tmp/results/
+          cd /tmp/results
           git add results.json
           git diff --staged --quiet || git commit -m "Test results $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          git push
+          git push origin results
