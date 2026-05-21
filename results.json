@@ -1,25 +1,4 @@
 {
-  "last_run": "2026-05-21T08:47:45Z",
-  "results": {
-    "test_contact_form_renders[chromium]": {
-      "status": "pass",
-      "message": "OK",
-      "duration_ms": 1451
-    },
-    "test_contact_form_has_submit[chromium]": {
-      "status": "pass",
-      "message": "OK",
-      "duration_ms": 1370
-    },
-    "test_papers_load[chromium]": {
-      "status": "pass",
-      "message": "OK",
-      "duration_ms": 789
-    },
-    "test_papers_ajax_filter[chromium]": {
-      "status": "pass",
-      "message": "OK",
-      "duration_ms": 1987
-    }
-  }
+  "last_run": "2026-05-21T15:28:41Z",
+  "results": {}
 }
