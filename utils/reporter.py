@@ -10,7 +10,7 @@ def write_results(report_path: str):
 
     results = {}
     for test in report.get("tests", []):
-        name = test["nodeid"].split("::")[-1]
+        name = test["nodeid"].split("::")[-1].split("[")[0]
         outcome = test["outcome"]  # "passed", "failed", "error"
         call = test.get("call", {})
         results[name] = {

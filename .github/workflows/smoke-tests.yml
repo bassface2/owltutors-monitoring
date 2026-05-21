@@ -27,6 +27,7 @@ jobs:
           TEST_BASE_URL: ${{ secrets.TEST_BASE_URL }}
           TEST_CLIENT_EMAIL: ${{ secrets.TEST_CLIENT_EMAIL }}
           TEST_CLIENT_PASSWORD: ${{ secrets.TEST_CLIENT_PASSWORD }}
+          OWL_TEST_API_KEY: ${{ secrets.OWL_TEST_API_KEY }}
         run: pytest --json-report --json-report-file=pytest-report.json -v
         continue-on-error: true
 
