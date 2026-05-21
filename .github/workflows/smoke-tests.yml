@@ -50,4 +50,4 @@ jobs:
           cd /tmp/results
           git add results.json
           git diff --staged --quiet || git commit -m "Test results $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          git push origin results
+          git push origin HEAD:results
