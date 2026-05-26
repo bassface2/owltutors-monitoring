@@ -28,6 +28,7 @@ jobs:
           TEST_CLIENT_EMAIL: ${{ secrets.TEST_CLIENT_EMAIL }}
           TEST_CLIENT_PASSWORD: ${{ secrets.TEST_CLIENT_PASSWORD }}
           OWL_TEST_API_KEY: ${{ secrets.OWL_TEST_API_KEY }}
+          TEST_TUTOR_IDS: ${{ secrets.TEST_TUTOR_IDS }}
         run: pytest --json-report --json-report-file=pytest-report.json -v
         continue-on-error: true
 
@@ -48,7 +49,19 @@ jobs:
           fi
 
           cp results.json /tmp/results/
+
+          # Copy details.json if written by tests
+          if [ -f "$GITHUB_WORKSPACE/details.json" ]; then
+            cp details.json /tmp/results/
+          fi
+
+          # Copy any screenshots captured during the run
+          if [ -d "$GITHUB_WORKSPACE/screenshots" ]; then
+            mkdir -p /tmp/results/screenshots
+            cp "$GITHUB_WORKSPACE/screenshots/"*.png /tmp/results/screenshots/ 2>/dev/null || true
+          fi
+
           cd /tmp/results
-          git add results.json
+          git add results.json details.json screenshots/
           git diff --staged --quiet || git commit -m "Test results $(date -u +%Y-%m-%dT%H:%M:%SZ)"
           git push origin HEAD:results

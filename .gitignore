@@ -1,3 +1,5 @@
 pytest-report.json
 __pycache__/
 .pytest_cache/
+details.json
+screenshots/
