@@ -1,55 +1,170 @@
 {
-  "last_run": "2026-05-26T09:42:10Z",
+  "last_run": "2026-05-26T13:11:04Z",
   "results": {
+    "test_client_login": {
+      "status": "pass",
+      "message": "OK",
+      "duration_ms": 4965
+    },
+    "test_client_dashboard": {
+      "status": "pass",
+      "message": "OK",
+      "duration_ms": 4899
+    },
     "test_contact_form_callback_submission": {
       "status": "pass",
       "message": "OK",
-      "duration_ms": 9985
+      "duration_ms": 10941
     },
     "test_contact_form_renders": {
       "status": "pass",
       "message": "OK",
-      "duration_ms": 1305
+      "duration_ms": 1470
     },
     "test_contact_form_has_submit": {
       "status": "pass",
       "message": "OK",
-      "duration_ms": 1348
+      "duration_ms": 1524
     },
     "test_contact_form_validation": {
       "status": "pass",
       "message": "OK",
-      "duration_ms": 3206
+      "duration_ms": 2634
     },
     "test_requested_tutor_cart": {
       "status": "pass",
       "message": "OK",
-      "duration_ms": 2987
+      "duration_ms": 3380
     },
     "test_contact_form_tutor_submission": {
       "status": "pass",
       "message": "OK",
-      "duration_ms": 14927
+      "duration_ms": 14953
     },
     "test_contact_form_something_else": {
       "status": "pass",
       "message": "OK",
-      "duration_ms": 9283
+      "duration_ms": 8903
     },
     "test_contact_form_requested_tutors": {
       "status": "pass",
       "message": "OK",
-      "duration_ms": 14830
+      "duration_ms": 15498
+    },
+    "test_blog_listing_loads": {
+      "status": "pass",
+      "message": "OK",
+      "duration_ms": 2366
+    },
+    "test_blog_article_loads": {
+      "status": "pass",
+      "message": "OK",
+      "duration_ms": 1885
+    },
+    "test_testimonials_page_loads": {
+      "status": "pass",
+      "message": "OK",
+      "duration_ms": 1236
+    },
+    "test_shop_loads": {
+      "status": "fail",
+      "message": "page = <Page url='https://otdev1602.wpengine.com/shop/'>\nbase_url = 'https://otdev1602.wpengine.com'\n\n    def test_shop_loads(page: Page, base_url: str):\n        \"\"\"Premium paper shop loads with at least one product card visible.\"\"\"\n        page.goto(f\"{base_url}{SHOP_URL}\")\n>       page.wait_for_se",
+      "duration_ms": 11901
+    },
+    "test_group_course_listing": {
+      "status": "pass",
+      "message": "OK",
+      "duration_ms": 1388
+    },
+    "test_group_course_detail": {
+      "status": "pass",
+      "message": "OK",
+      "duration_ms": 2507
+    },
+    "test_homepage_loads": {
+      "status": "pass",
+      "message": "OK",
+      "duration_ms": 1558
     },
     "test_papers_load": {
       "status": "pass",
       "message": "OK",
-      "duration_ms": 685
+      "duration_ms": 1399
     },
     "test_papers_ajax_filter": {
       "status": "pass",
       "message": "OK",
-      "duration_ms": 1815
+      "duration_ms": 1934
+    },
+    "test_papers_load_more": {
+      "status": "pass",
+      "message": "OK",
+      "duration_ms": 2258
+    },
+    "test_school_listing_page_loads": {
+      "status": "pass",
+      "message": "OK",
+      "duration_ms": 1299
+    },
+    "test_school_text_search_ajax": {
+      "status": "pass",
+      "message": "OK",
+      "duration_ms": 1833
+    },
+    "test_school_filter_form_returns_results": {
+      "status": "pass",
+      "message": "OK",
+      "duration_ms": 3472
+    },
+    "test_school_profile_loads": {
+      "status": "pass",
+      "message": "OK",
+      "duration_ms": 4970
+    },
+    "test_tutor_search_page_loads": {
+      "status": "pass",
+      "message": "OK",
+      "duration_ms": 944
+    },
+    "test_tutor_search_returns_results": {
+      "status": "pass",
+      "message": "OK",
+      "duration_ms": 2077
+    },
+    "test_tutor_profile_loads": {
+      "status": "pass",
+      "message": "OK",
+      "duration_ms": 2439
+    },
+    "test_subject_with_levels_reveals_level_dropdown": {
+      "status": "pass",
+      "message": "OK",
+      "duration_ms": 1107
+    },
+    "test_school_entrance_subject_reveals_school_filter": {
+      "status": "pass",
+      "message": "OK",
+      "duration_ms": 1943
+    },
+    "test_home_delivery_reveals_location_filter": {
+      "status": "pass",
+      "message": "OK",
+      "duration_ms": 1068
+    },
+    "test_detailed_filters_reveal_sen_and_badges": {
+      "status": "pass",
+      "message": "OK",
+      "duration_ms": 1070
+    },
+    "test_availability_grid_appears_and_accepts_input": {
+      "status": "pass",
+      "message": "OK",
+      "duration_ms": 1498
+    },
+    "test_full_search_subject_level_home_location": {
+      "status": "pass",
+      "message": "OK",
+      "duration_ms": 2600
     }
   }
 }
