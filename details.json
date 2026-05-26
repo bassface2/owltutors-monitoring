@@ -1,0 +1,19 @@
+{
+  "test_contact_form_tutor_submission": {
+    "job_id": "199417",
+    "screenshot": "screenshots/job_tutor_submission.png"
+  },
+  "test_contact_form_something_else": {
+    "job_id": "199419",
+    "screenshot": "screenshots/job_something_else.png"
+  },
+  "test_contact_form_requested_tutors": {
+    "job_id": "199421",
+    "tutor_ids": [
+      "14497",
+      "24201",
+      "35649"
+    ],
+    "screenshot": "screenshots/job_requested_tutors.png"
+  }
+}
