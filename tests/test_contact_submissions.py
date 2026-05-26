@@ -143,6 +143,11 @@ def test_requested_tutor_cart(page: Page, base_url: str):
 
     # sessionStorage should contain exactly 3 IDs
     assert len(ids) == 3, f"Expected 3 IDs in sessionStorage, got: {ids}"
+    write_detail("test_requested_tutor_cart", {
+        "message": "Tutor shortlist populated with 3 tutors and submit link updated",
+        "tutor_ids": ids,
+        "screenshot": "screenshots/tutor_cart.png",
+    })
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -161,8 +166,11 @@ def test_contact_form_tutor_submission(page: Page, base_url: str, cleanup_after)
         label="A tutor to provide tuition services"
     )
 
-    # Wait for subject AJAX to complete and fields to settle
-    page.wait_for_load_state("networkidle")
+    # Wait for subject checkboxes to load via AJAX
+    page.wait_for_selector(
+        "div[data-name='subject_list'] input[type='checkbox']",
+        timeout=10000,
+    )
     _select_subject(page, "Japanese", "IB Standard Level")
 
     page.locator("div[data-name='tuition_requirements_original'] textarea").fill(
@@ -187,6 +195,7 @@ def test_contact_form_tutor_submission(page: Page, base_url: str, cleanup_after)
         path="screenshots/job_tutor_submission.png"
     )
     write_detail("test_contact_form_tutor_submission", {
+        "message": f"Tutor enquiry submitted and redirected to job {job_id}",
         "job_id": job_id,
         "screenshot": "screenshots/job_tutor_submission.png",
     })
@@ -227,6 +236,7 @@ def test_contact_form_something_else(page: Page, base_url: str, cleanup_after):
         path="screenshots/job_something_else.png"
     )
     write_detail("test_contact_form_something_else", {
+        "message": f"'Something else' enquiry submitted and redirected to job {job_id}",
         "job_id": job_id,
         "screenshot": "screenshots/job_something_else.png",
     })
@@ -293,6 +303,7 @@ def test_contact_form_requested_tutors(page: Page, base_url: str, cleanup_after)
         path="screenshots/job_requested_tutors.png"
     )
     write_detail("test_contact_form_requested_tutors", {
+        "message": f"Requested tutors flow submitted and redirected to job {job_id}",
         "job_id": job_id,
         "tutor_ids": ids,
         "screenshot": "screenshots/job_requested_tutors.png",

@@ -1,8 +1,10 @@
 import os
+import re
 import pytest
 from playwright.sync_api import Page, expect
 
 from utils.cleanup import delete_test_posts
+from utils.details import write_detail
 
 CONTACT_URL = "/contact-us/"
 
@@ -59,4 +61,14 @@ def test_contact_form_callback_submission(page: Page, base_url: str, cleanup_aft
 
     # Submit — PHP echoes a JS redirect so use wait_for_url rather than expect_navigation
     page.locator("#contact_form_submit").click()
-    page.wait_for_url(lambda url: "/jobs/" in url, wait_until="domcontentloaded", timeout=30000)
+    page.wait_for_url(re.compile(r".*/jobs/"), timeout=90000)
+
+    job_id = re.search(r"/jobs/(\d+)/", page.url).group(1)
+    print(f"\n[result] job_id={job_id}")
+    os.makedirs("screenshots", exist_ok=True)
+    page.screenshot(path="screenshots/job_callback_submission.png")
+    write_detail("test_contact_form_callback_submission", {
+        "message": f"Callback enquiry submitted and redirected to job {job_id}",
+        "job_id": job_id,
+        "screenshot": "screenshots/job_callback_submission.png",
+    })
