@@ -1,5 +1,16 @@
 import os
+import re
 import requests
+
+
+def _parse_base_url(base_url: str):
+    """Return (clean_url, auth_tuple_or_None) stripping credentials from the URL."""
+    match = re.match(r"(https?://)([^:@]+):([^@]+)@(.+)", base_url)
+    if match:
+        clean = match.group(1) + match.group(4)
+        auth = (match.group(2), match.group(3))
+        return clean, auth
+    return base_url, None
 
 
 def delete_test_posts(base_url: str) -> int:
@@ -8,9 +19,11 @@ def delete_test_posts(base_url: str) -> int:
     if not api_key:
         raise RuntimeError("OWL_TEST_API_KEY environment variable is not set")
 
+    clean_url, auth = _parse_base_url(base_url)
     resp = requests.post(
-        f"{base_url}/wp-admin/admin-ajax.php",
+        f"{clean_url}/wp-admin/admin-ajax.php",
         data={"action": "owl_delete_test_posts", "api_key": api_key},
+        auth=auth,
         timeout=60,
     )
     resp.raise_for_status()

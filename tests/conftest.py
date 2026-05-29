@@ -1,3 +1,4 @@
+import base64
 import os
 import re
 import pytest
@@ -12,17 +13,22 @@ def base_url():
 def browser_context_args(browser_context_args):
     """Pass HTTP Basic Auth credentials to every browser context.
     Credentials are extracted from TEST_BASE_URL if present
-    (e.g. https://user:pass@otdev1602.wpengine.com), ensuring AJAX
-    requests made by the page also carry the auth header."""
+    (e.g. https://user:pass@otdev1602.wpengine.com).
+
+    Both http_credentials (handles 401 challenges) and extra_http_headers
+    (proactively sends Authorization on every request, including JS-initiated
+    AJAX calls to admin-ajax.php) are set — the latter is needed because
+    WP Engine password protection blocks XHR/fetch without the header."""
     raw = os.environ.get("TEST_BASE_URL", "")
     match = re.match(r"https?://([^:@]+):([^@]+)@", raw)
     if match:
+        username = match.group(1)
+        password = match.group(2)
+        token = base64.b64encode(f"{username}:{password}".encode()).decode()
         return {
             **browser_context_args,
-            "http_credentials": {
-                "username": match.group(1),
-                "password": match.group(2),
-            },
+            "http_credentials": {"username": username, "password": password},
+            "extra_http_headers": {"Authorization": f"Basic {token}"},
         }
     return browser_context_args
 
