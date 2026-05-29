@@ -30,7 +30,18 @@ def cleanup_after(base_url):
 
 
 def _flag_test_post(page: Page):
-    page.evaluate("document.getElementById('ot_test_post').value = '1'")
+    api_key = os.environ.get("OWL_TEST_API_KEY", "")
+    page.evaluate(
+        """(apiKey) => {
+            document.getElementById('ot_test_post').value = '1';
+            var inp = document.createElement('input');
+            inp.type = 'hidden';
+            inp.name = 'ot_test_api_key';
+            inp.value = apiKey;
+            document.getElementById('tutor_request_form').appendChild(inp);
+        }""",
+        api_key,
+    )
 
 
 def _fill_client_info(page: Page):

@@ -1,9 +1,30 @@
 import os
+import re
 import pytest
+
 
 @pytest.fixture(scope="session")
 def base_url():
     return os.environ["TEST_BASE_URL"]
+
+
+@pytest.fixture(scope="session")
+def browser_context_args(browser_context_args):
+    """Pass HTTP Basic Auth credentials to every browser context.
+    Credentials are extracted from TEST_BASE_URL if present
+    (e.g. https://user:pass@otdev1602.wpengine.com), ensuring AJAX
+    requests made by the page also carry the auth header."""
+    raw = os.environ.get("TEST_BASE_URL", "")
+    match = re.match(r"https?://([^:@]+):([^@]+)@", raw)
+    if match:
+        return {
+            **browser_context_args,
+            "http_credentials": {
+                "username": match.group(1),
+                "password": match.group(2),
+            },
+        }
+    return browser_context_args
 
 @pytest.fixture(scope="session")
 def client_credentials():

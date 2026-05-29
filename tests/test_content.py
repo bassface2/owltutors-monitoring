@@ -52,8 +52,8 @@ def test_testimonials_page_loads(page: Page, base_url: str):
 def test_shop_loads(page: Page, base_url: str):
     """Premium paper shop loads with at least one product card visible."""
     page.goto(f"{base_url}{SHOP_URL}")
-    page.wait_for_selector("ul.products li.product", timeout=10000)
-    expect(page.locator("ul.products li.product").first).to_be_visible()
+    page.wait_for_selector(".paper-card", timeout=10000)
+    expect(page.locator(".paper-card").first).to_be_visible()
     os.makedirs("screenshots", exist_ok=True)
     page.screenshot(path="screenshots/shop.png")
     write_detail("test_shop_loads", {
