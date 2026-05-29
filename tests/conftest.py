@@ -6,7 +6,12 @@ import pytest
 
 @pytest.fixture(scope="session")
 def base_url():
-    return os.environ["TEST_BASE_URL"]
+    raw = os.environ["TEST_BASE_URL"]
+    # Strip user:pass@ from the URL. Embedding credentials in the navigation URL
+    # causes Chrome to include them when resolving relative paths, so fetch('/wp-admin/admin-ajax.php')
+    # resolves to https://user:pass@host/... and Chrome refuses to construct the Request.
+    # Auth is handled separately by http_credentials + inject_basic_auth.
+    return re.sub(r"(https?://)[^:@]+:[^@]+@", r"\1", raw)
 
 
 def _basic_auth_token() -> str | None:
