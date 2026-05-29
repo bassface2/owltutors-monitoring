@@ -1,3 +1,4 @@
+import base64
 import os
 import re
 import requests
@@ -20,10 +21,19 @@ def delete_test_posts(base_url: str) -> int:
         raise RuntimeError("OWL_TEST_API_KEY environment variable is not set")
 
     clean_url, auth = _parse_base_url(base_url)
+
+    # Send Authorization header proactively on the first request.
+    # requests auth= is reactive (retries on 401 only); WP Engine can return 403
+    # directly without issuing a challenge, so the retry never fires.
+    headers = {}
+    if auth:
+        token = base64.b64encode(f"{auth[0]}:{auth[1]}".encode()).decode()
+        headers["Authorization"] = f"Basic {token}"
+
     resp = requests.post(
         f"{clean_url}/wp-admin/admin-ajax.php",
         data={"action": "owl_delete_test_posts", "api_key": api_key},
-        auth=auth,
+        headers=headers,
         timeout=60,
     )
     resp.raise_for_status()

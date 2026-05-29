@@ -9,28 +9,46 @@ def base_url():
     return os.environ["TEST_BASE_URL"]
 
 
-@pytest.fixture(scope="session")
-def browser_context_args(browser_context_args):
-    """Pass HTTP Basic Auth credentials to every browser context.
-    Credentials are extracted from TEST_BASE_URL if present
-    (e.g. https://user:pass@otdev1602.wpengine.com).
-
-    Both http_credentials (handles 401 challenges) and extra_http_headers
-    (proactively sends Authorization on every request, including JS-initiated
-    AJAX calls to admin-ajax.php) are set — the latter is needed because
-    WP Engine password protection blocks XHR/fetch without the header."""
+def _basic_auth_token() -> str | None:
+    """Return a Basic Auth token from TEST_BASE_URL credentials, or None."""
     raw = os.environ.get("TEST_BASE_URL", "")
     match = re.match(r"https?://([^:@]+):([^@]+)@", raw)
     if match:
-        username = match.group(1)
-        password = match.group(2)
-        token = base64.b64encode(f"{username}:{password}".encode()).decode()
+        return base64.b64encode(f"{match.group(1)}:{match.group(2)}".encode()).decode()
+    return None
+
+
+@pytest.fixture(scope="session")
+def browser_context_args(browser_context_args):
+    """Supply http_credentials so Playwright can respond to any 401 challenges."""
+    raw = os.environ.get("TEST_BASE_URL", "")
+    match = re.match(r"https?://([^:@]+):([^@]+)@", raw)
+    if match:
         return {
             **browser_context_args,
-            "http_credentials": {"username": username, "password": password},
-            "extra_http_headers": {"Authorization": f"Basic {token}"},
+            "http_credentials": {"username": match.group(1), "password": match.group(2)},
         }
     return browser_context_args
+
+
+@pytest.fixture(autouse=True)
+def inject_basic_auth(page):
+    """Intercept every request from the page and add the Authorization header.
+
+    http_credentials alone is insufficient: WP Engine password protection can
+    block JS-initiated XHR/fetch calls before issuing a 401 challenge, so the
+    browser never gets a chance to retry with credentials. page.route() fires
+    before the request leaves the browser and injects the header proactively,
+    covering admin-ajax.php AJAX calls as well as normal navigations."""
+    token = _basic_auth_token()
+    if token:
+        auth_header = f"Basic {token}"
+        page.route(
+            "**/*",
+            lambda route: route.continue_(
+                headers={**route.request.headers, "Authorization": auth_header}
+            ),
+        )
 
 @pytest.fixture(scope="session")
 def client_credentials():
