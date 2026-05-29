@@ -50,6 +50,33 @@ def inject_basic_auth(page):
             ),
         )
 
+@pytest.fixture(autouse=True)
+def log_ajax(page, request):
+    """Log every admin-ajax.php response: status, action, and truncated body.
+
+    Runs for every test so failing tests show exactly what the server returned.
+    Output is captured by pytest and printed only on failure (-s shows always)."""
+    responses = []
+
+    def on_response(response):
+        if "admin-ajax.php" in response.url:
+            try:
+                body = response.text()
+            except Exception:
+                body = "<unreadable>"
+            responses.append(
+                f"  [{response.status}] {response.url} → {body[:300]}"
+            )
+
+    page.on("response", on_response)
+    page.on("console", lambda msg: print(f"  [console:{msg.type}] {msg.text}") if msg.type in ("error", "warning") else None)
+    yield
+    if responses:
+        print(f"\n[ajax log for {request.node.name}]")
+        for line in responses:
+            print(line)
+
+
 @pytest.fixture(scope="session")
 def client_credentials():
     return {
