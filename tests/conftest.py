@@ -52,11 +52,19 @@ def inject_basic_auth(page):
 
 @pytest.fixture(autouse=True)
 def log_ajax(page, request):
-    """Log every admin-ajax.php response: status, action, and truncated body.
+    """Comprehensive network + JS diagnostics for every test.
 
-    Runs for every test so failing tests show exactly what the server returned.
-    Output is captured by pytest and printed only on failure (-s shows always)."""
+    Captures:
+    - admin-ajax.php responses (status + body)
+    - admin-ajax.php requests that fail/abort before getting a response
+    - all browser console messages (all levels)
+    - unhandled JS page errors
+    - a DOM snapshot after the test (ajaxurl value + key element presence)
+    """
     responses = []
+    failed_requests = []
+    console_msgs = []
+    page_errors = []
 
     def on_response(response):
         if "admin-ajax.php" in response.url:
@@ -64,17 +72,45 @@ def log_ajax(page, request):
                 body = response.text()
             except Exception:
                 body = "<unreadable>"
-            responses.append(
-                f"  [{response.status}] {response.url} → {body[:300]}"
-            )
+            responses.append(f"  [response {response.status}] {response.url} → {body[:300]}")
+
+    def on_requestfailed(req):
+        if "admin-ajax.php" in req.url:
+            failed_requests.append(f"  [FAILED] {req.url} — {req.failure}")
 
     page.on("response", on_response)
-    page.on("console", lambda msg: print(f"  [console:{msg.type}] {msg.text}") if msg.type in ("error", "warning") else None)
+    page.on("requestfailed", on_requestfailed)
+    page.on("console", lambda msg: console_msgs.append(f"  [console:{msg.type}] {msg.text}"))
+    page.on("pageerror", lambda err: page_errors.append(f"  [pageerror] {err}"))
+
     yield
-    if responses:
-        print(f"\n[ajax log for {request.node.name}]")
-        for line in responses:
+
+    # DOM snapshot — only meaningful if page navigated somewhere
+    dom = {}
+    try:
+        dom = page.evaluate("""() => ({
+            ajaxurl:      window.ajaxurl || null,
+            formEl:       !!document.getElementById('tutorSearchForm'),
+            resultsEl:    !!document.getElementById('tutor_results'),
+            listingsCheck:!!document.getElementById('tutor-listings-page'),
+            url:          window.location.href,
+        })""")
+    except Exception:
+        pass
+
+    lines = responses + failed_requests
+    if lines or page_errors or dom:
+        print(f"\n[diag: {request.node.name}]")
+        for line in lines:
             print(line)
+        for line in page_errors:
+            print(line)
+        if dom:
+            print(f"  [dom] {dom}")
+    # Always print console — filter to errors/warnings to keep output manageable
+    for msg in console_msgs:
+        if any(t in msg for t in ("[console:error]", "[console:warning]")):
+            print(msg)
 
 
 @pytest.fixture(scope="session")
