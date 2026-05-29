@@ -8,8 +8,8 @@
     "screenshot": "screenshots/client_dashboard.png"
   },
   "test_contact_form_callback_submission": {
-    "message": "Callback enquiry submitted and redirected to job 199458",
-    "job_id": "199458",
+    "message": "Callback enquiry submitted and redirected to job 199519",
+    "job_id": "199519",
     "screenshot": "screenshots/job_callback_submission.png"
   },
   "test_contact_form_renders": {
@@ -24,34 +24,15 @@
     "message": "Contact form validation blocked empty submit and showed errors",
     "screenshot": "screenshots/contact_form_validation.png"
   },
-  "test_requested_tutor_cart": {
-    "message": "Tutor shortlist populated with 3 tutors and submit link updated",
-    "tutor_ids": [
-      "26571",
-      "34868",
-      "37768"
-    ],
-    "screenshot": "screenshots/tutor_cart.png"
-  },
   "test_contact_form_tutor_submission": {
-    "message": "Tutor enquiry submitted and redirected to job 199460",
-    "job_id": "199460",
+    "message": "Tutor enquiry submitted and redirected to job 199521",
+    "job_id": "199521",
     "screenshot": "screenshots/job_tutor_submission.png"
   },
   "test_contact_form_something_else": {
-    "message": "'Something else' enquiry submitted and redirected to job 199462",
-    "job_id": "199462",
+    "message": "'Something else' enquiry submitted and redirected to job 199523",
+    "job_id": "199523",
     "screenshot": "screenshots/job_something_else.png"
-  },
-  "test_contact_form_requested_tutors": {
-    "message": "Requested tutors flow submitted and redirected to job 199464",
-    "job_id": "199464",
-    "tutor_ids": [
-      "26571",
-      "34868",
-      "37768"
-    ],
-    "screenshot": "screenshots/job_requested_tutors.png"
   },
   "test_blog_listing_loads": {
     "message": "Blog listing page loaded with article cards visible",
@@ -64,6 +45,10 @@
   "test_testimonials_page_loads": {
     "message": "Testimonials page loaded with hero header visible",
     "screenshot": "screenshots/testimonials.png"
+  },
+  "test_shop_loads": {
+    "message": "Premium paper shop loaded with product cards visible",
+    "screenshot": "screenshots/shop.png"
   },
   "test_group_course_listing": {
     "message": "Group course listing loaded with course cards visible",
@@ -109,21 +94,9 @@
     "message": "Tutor search page loaded with form visible",
     "screenshot": "screenshots/tutor_search_page.png"
   },
-  "test_tutor_search_returns_results": {
-    "message": "Tutor search returned results via AJAX",
-    "screenshot": "screenshots/tutor_search_results.png"
-  },
-  "test_tutor_profile_loads": {
-    "message": "Tutor profile page loaded successfully",
-    "screenshot": "screenshots/tutor_profile.png"
-  },
   "test_subject_with_levels_reveals_level_dropdown": {
     "message": "Level dropdown appeared after selecting English",
     "screenshot": "screenshots/search_level_dropdown.png"
-  },
-  "test_school_entrance_subject_reveals_school_filter": {
-    "message": "School filter appeared and school selected after choosing 11 Plus",
-    "screenshot": "screenshots/search_school_filter.png"
   },
   "test_home_delivery_reveals_location_filter": {
     "message": "Location filter appeared after selecting Home delivery",
@@ -136,9 +109,5 @@
   "test_availability_grid_appears_and_accepts_input": {
     "message": "Availability grid appeared and Monday morning + Friday evening selected",
     "screenshot": "screenshots/search_availability.png"
-  },
-  "test_full_search_subject_level_home_location": {
-    "message": "Full pipeline search ran: English, Home delivery, Balham",
-    "screenshot": "screenshots/search_full_pipeline.png"
   }
 }
