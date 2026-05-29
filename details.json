@@ -8,8 +8,8 @@
     "screenshot": "screenshots/client_dashboard.png"
   },
   "test_contact_form_callback_submission": {
-    "message": "Callback enquiry submitted and redirected to job 199525",
-    "job_id": "199525",
+    "message": "Callback enquiry submitted and redirected to job 199531",
+    "job_id": "199531",
     "screenshot": "screenshots/job_callback_submission.png"
   },
   "test_contact_form_renders": {
@@ -25,13 +25,13 @@
     "screenshot": "screenshots/contact_form_validation.png"
   },
   "test_contact_form_tutor_submission": {
-    "message": "Tutor enquiry submitted and redirected to job 199527",
-    "job_id": "199527",
+    "message": "Tutor enquiry submitted and redirected to job 199533",
+    "job_id": "199533",
     "screenshot": "screenshots/job_tutor_submission.png"
   },
   "test_contact_form_something_else": {
-    "message": "'Something else' enquiry submitted and redirected to job 199529",
-    "job_id": "199529",
+    "message": "'Something else' enquiry submitted and redirected to job 199535",
+    "job_id": "199535",
     "screenshot": "screenshots/job_something_else.png"
   },
   "test_blog_listing_loads": {
