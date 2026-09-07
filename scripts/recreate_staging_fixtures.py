@@ -48,7 +48,11 @@ def main() -> int:
 
     clean_url = re.sub(r"(https?://)[^:@]+:[^@]+@", r"\1", base_url)
 
-    headers = {}
+    # WP Engine blocks the default `python-requests/x.x.x` User-Agent as a
+    # known scripting-library signature (found 7 Sept 2026 -- see
+    # owl_system/docs/TO_DO.md). This runs standalone, outside pytest, so it
+    # can't rely on conftest.py's process-wide patch and needs its own header.
+    headers = {"User-Agent": "OwlTutorsSmokeTests/1.0"}
     http_user = os.environ.get("TEST_HTTP_USER", "").strip()
     http_pass = os.environ.get("TEST_HTTP_PASS", "").strip()
     if http_user and http_pass:

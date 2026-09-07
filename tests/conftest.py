@@ -4,11 +4,23 @@ import os
 import re
 import uuid as _uuid
 import pytest
+import requests
 from playwright.sync_api import Browser
 
 
 _LIVE_DOMAIN   = "owltutors.co.uk"
 _ALLOW_LIVE_ENV = "OWL_TEST_ALLOW_LIVE"
+
+# WP Engine blocks the default `python-requests/x.x.x` User-Agent by default
+# as a known scripting-library signature (found 7 Sept 2026 -- see
+# owl_system/docs/TO_DO.md for the full investigation). Every `requests.post`/
+# `.get()` call across tests/ and utils/ goes through a fresh `requests.Session()`
+# under the hood, and each one re-reads this default at call time, so patching
+# it once here -- before any test module or utils/ helper makes its first
+# request -- covers every call site in the suite without editing them
+# individually. scripts/recreate_staging_fixtures.py runs standalone (outside
+# pytest, so this patch doesn't reach it) and sets its own header instead.
+requests.utils.default_user_agent = lambda: "OwlTutorsSmokeTests/1.0"
 
 
 def pytest_sessionstart(session):
