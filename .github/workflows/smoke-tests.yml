@@ -19,6 +19,38 @@ jobs:
       - name: Log runner public IP
         run: curl -s https://api.ipify.org
 
+      # Diagnostic only, added 5 Sept 2026 -- WP Engine support found no 403s
+      # in their server-level access/error logs and asked us to confirm the
+      # 403 directly and show it replicated outside our test framework. This
+      # replays the exact same request pytest_sessionstart makes (same URL,
+      # same POST body, same Basic Auth) via a bare curl, with no Python,
+      # requests library, or Playwright involved, and prints the raw response
+      # status line, headers, and body for WP Engine to inspect. Only
+      # response headers are printed (never -v/request headers), so Basic
+      # Auth / the API key are never echoed into the log. Remove once the 403
+      # investigation is closed.
+      - name: Diagnostic - raw curl replication for WP Engine
+        continue-on-error: true
+        timeout-minutes: 1
+        env:
+          TEST_BASE_URL: ${{ secrets.TEST_BASE_URL }}
+          OWL_TEST_API_KEY: ${{ secrets.OWL_TEST_API_KEY }}
+          TEST_HTTP_USER: ${{ secrets.TEST_HTTP_USER }}
+          TEST_HTTP_PASS: ${{ secrets.TEST_HTTP_PASS }}
+        run: |
+          STATUS=$(curl -s -o response_body.txt -D response_headers.txt -w "%{http_code}" \
+            --max-time 15 \
+            -X POST \
+            -u "$TEST_HTTP_USER:$TEST_HTTP_PASS" \
+            -d "action=owl_set_test_mode" \
+            -d "api_key=$OWL_TEST_API_KEY" \
+            "$TEST_BASE_URL/wp-admin/admin-ajax.php")
+          echo "HTTP status: $STATUS"
+          echo "--- response headers ---"
+          cat response_headers.txt
+          echo "--- response body ---"
+          cat response_body.txt
+
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
