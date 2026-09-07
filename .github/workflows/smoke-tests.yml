@@ -27,8 +27,18 @@ jobs:
       # requests library, or Playwright involved, and prints the raw response
       # status line, headers, and body for WP Engine to inspect. Only
       # response headers are printed (never -v/request headers), so Basic
-      # Auth / the API key are never echoed into the log. Remove once the 403
-      # investigation is closed.
+      # Auth / the API key are never echoed into the log.
+      #
+      # Extended 7 Sept 2026: the first run of this step got a clean 200, but
+      # the very next step (the Python-based fixture script, same runner,
+      # same IP, ~28s later) still got its usual instant 403 -- ruling out
+      # the IP itself and pointing straight at something about the request
+      # signature. The one concrete difference between curl and Python's
+      # `requests` library is the default User-Agent header
+      # (`python-requests/2.31.0` vs `curl/x.y.z`). This now fires the same
+      # request 3 times with different User-Agent strings, from the same IP,
+      # seconds apart, to see whether that header alone is what's being
+      # blocked. Remove this whole step once the 403 investigation is closed.
       - name: Diagnostic - raw curl replication for WP Engine
         continue-on-error: true
         timeout-minutes: 1
@@ -38,18 +48,26 @@ jobs:
           TEST_HTTP_USER: ${{ secrets.TEST_HTTP_USER }}
           TEST_HTTP_PASS: ${{ secrets.TEST_HTTP_PASS }}
         run: |
-          STATUS=$(curl -s -o response_body.txt -D response_headers.txt -w "%{http_code}" \
-            --max-time 15 \
-            -X POST \
-            -u "$TEST_HTTP_USER:$TEST_HTTP_PASS" \
-            -d "action=owl_set_test_mode" \
-            -d "api_key=$OWL_TEST_API_KEY" \
-            "$TEST_BASE_URL/wp-admin/admin-ajax.php")
-          echo "HTTP status: $STATUS"
-          echo "--- response headers ---"
-          cat response_headers.txt
-          echo "--- response body ---"
-          cat response_body.txt
+          try_ua () {
+            LABEL="$1"
+            UA="$2"
+            STATUS=$(curl -s -o response_body.txt -D response_headers.txt -w "%{http_code}" \
+              --max-time 15 \
+              -X POST \
+              -A "$UA" \
+              -u "$TEST_HTTP_USER:$TEST_HTTP_PASS" \
+              -d "action=owl_set_test_mode" \
+              -d "api_key=$OWL_TEST_API_KEY" \
+              "$TEST_BASE_URL/wp-admin/admin-ajax.php")
+            echo "=== $LABEL (User-Agent: $UA) -> HTTP $STATUS ==="
+            cat response_headers.txt
+            echo "body: $(cat response_body.txt)"
+            echo ""
+          }
+
+          try_ua "default curl UA"      "curl/8.5.0"
+          try_ua "python-requests UA"   "python-requests/2.31.0"
+          try_ua "real browser UA"      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
 
       - uses: actions/checkout@v4
 
