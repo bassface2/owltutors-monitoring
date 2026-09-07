@@ -8,6 +8,7 @@ from playwright.sync_api import Page, expect
 
 from utils.auth import auth_headers, is_basic_auth_configured
 from utils.details import write_detail
+from utils.recaptcha_bypass import inject_recaptcha_bypass
 
 LOGIN_URL = "/login/"
 
@@ -158,7 +159,7 @@ def test_connect_webhook_returns_200_for_valid_signed_payload(base_url: str):
 
 @pytest.mark.tutors
 @pytest.mark.critical
-def test_add_card_checkout_session_returns_stripe_session(page: Page, base_url: str, client_credentials):
+def test_add_card_checkout_session_returns_stripe_session(page: Page, base_url: str, api_key: str, client_credentials):
     """
     A logged-in client's 'Add payment method' action fires ot_create_checkout_session
     (type=add_payment_method) via AJAX. The response contains a real Stripe
@@ -176,6 +177,7 @@ def test_add_card_checkout_session_returns_stripe_session(page: Page, base_url: 
     page.wait_for_load_state("domcontentloaded")
     page.locator("#ot_login_name").fill(client_credentials["email"])
     page.locator("#pw1").fill(client_credentials["password"])
+    inject_recaptcha_bypass(page, api_key, form_id="ot_login")
     page.locator("#login_submit").click()
     page.wait_for_url(lambda url: LOGIN_URL not in url, timeout=90000)
 
@@ -210,6 +212,7 @@ def _create_and_login_disposable_client(page: Page, base_url: str, api_key: str)
     page.wait_for_load_state("domcontentloaded")
     page.locator("#ot_login_name").fill(client["client_email"])
     page.locator("#pw1").fill(client["client_password"])
+    inject_recaptcha_bypass(page, api_key, form_id="ot_login")
     page.locator("#login_submit").click()
     page.wait_for_url(lambda url: LOGIN_URL not in url, timeout=90000)
 

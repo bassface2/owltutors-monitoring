@@ -4,17 +4,19 @@ documented in docs/wati-mgmt.md.
 """
 from playwright.sync_api import Page, expect
 from utils.details import write_detail
+from utils.recaptcha_bypass import inject_recaptcha_bypass
 import pytest
 
 LOGIN_URL = "/login/"
 
 
-def _login(page: Page, base_url: str, email: str, password: str):
+def _login(page: Page, base_url: str, email: str, password: str, api_key: str):
     page.goto(f"{base_url}{LOGIN_URL}")
     expect(page.locator("#ot_login")).to_be_visible()
     page.wait_for_load_state("networkidle")
     page.locator("#ot_login_name").fill(email)
     page.locator("#pw1").fill(password)
+    inject_recaptcha_bypass(page, api_key, form_id="ot_login")
     page.locator("#login_submit").click()
     page.wait_for_url(lambda url: LOGIN_URL not in url, timeout=30000)
 
@@ -22,7 +24,7 @@ def _login(page: Page, base_url: str, email: str, password: str):
 @pytest.mark.misc
 @pytest.mark.critical
 def test_whatsapp_template_preview_rejects_path_traversal(
-    page: Page, base_url: str, tutor_credentials
+    page: Page, base_url: str, api_key: str, tutor_credentials
 ):
     """
     ot_whatsapp_message_call_callback() (wp_ajax_ot_whatsapp_message_call)
@@ -43,7 +45,7 @@ def test_whatsapp_template_preview_rejects_path_traversal(
     (and cannot, from a black-box HTTP test) prove no file was read, only
     that the response contains no evidence one was.
     """
-    _login(page, base_url, tutor_credentials["email"], tutor_credentials["password"])
+    _login(page, base_url, tutor_credentials["email"], tutor_credentials["password"], api_key)
 
     traversal_attempts = [
         "../../../../wp-config",
@@ -72,7 +74,7 @@ def test_whatsapp_template_preview_rejects_path_traversal(
 
 @pytest.mark.misc
 def test_whatsapp_template_preview_resolves_real_template(
-    page: Page, base_url: str, tutor_credentials
+    page: Page, base_url: str, api_key: str, tutor_credentials
 ):
     """
     Companion to the traversal-rejection test above: confirms the fix didn't
@@ -80,7 +82,7 @@ def test_whatsapp_template_preview_resolves_real_template(
     client_job_stage3 (includes/whatsapp/sales/client_job_stage3.php), one of
     the two real templates the endpoint should resolve per docs/wati-mgmt.md.
     """
-    _login(page, base_url, tutor_credentials["email"], tutor_credentials["password"])
+    _login(page, base_url, tutor_credentials["email"], tutor_credentials["password"], api_key)
 
     resp = page.request.get(
         f"{base_url}/wp-admin/admin-ajax.php"

@@ -6,6 +6,7 @@ from utils.auth import auth_headers
 from utils.create_test_job import create_test_job
 from utils.details import write_detail
 from utils.get_test_job_fields import get_test_job_fields
+from utils.recaptcha_bypass import inject_recaptcha_bypass
 from utils.timesheet_wizard import (
     complete_goal_wizard_via_skip, fill_and_submit_timesheet_form, submit_student_name_if_shown,
 )
@@ -28,12 +29,13 @@ def cleanup_after(base_url):
         print(f"[cleanup] warning: {e}")
 
 
-def _login(page: Page, base_url: str, email: str, password: str):
+def _login(page: Page, base_url: str, email: str, password: str, api_key: str):
     page.goto(f"{base_url}{LOGIN_URL}")
     expect(page.locator("#ot_login")).to_be_visible()
     page.wait_for_load_state("networkidle")
     page.locator("#ot_login_name").fill(email)
     page.locator("#pw1").fill(password)
+    inject_recaptcha_bypass(page, api_key, form_id="ot_login")
     page.locator("#login_submit").click()
     page.wait_for_url(lambda url: LOGIN_URL not in url, timeout=30000)
 
@@ -55,14 +57,14 @@ def _activate_profile_tab(page: Page, tab_id: str):
 
 
 @pytest.mark.tutors
-def test_tutor_dashboard_loads(page: Page, base_url: str, tutor_credentials):
+def test_tutor_dashboard_loads(page: Page, base_url: str, api_key: str, tutor_credentials):
     """
     A logged-in tutor visiting /dashboard/ sees the tutor dashboard.
     Header id="tutor-listings-page" (page-dashboard.php:586).
     Outer container div#tutor_dashboard (page-dashboard.php:483).
     Covers: Tutor dashboard loads for logged-in tutor.
     """
-    _login(page, base_url, tutor_credentials["email"], tutor_credentials["password"])
+    _login(page, base_url, tutor_credentials["email"], tutor_credentials["password"], api_key)
     page.goto(f"{base_url}{DASHBOARD_URL}", wait_until="domcontentloaded", timeout=90000)
     expect(page.locator("header#tutor-listings-page")).to_be_visible()
     expect(page.locator("div#tutor_dashboard")).to_be_visible()
@@ -73,13 +75,13 @@ def test_tutor_dashboard_loads(page: Page, base_url: str, tutor_credentials):
 
 @pytest.mark.tutors
 @pytest.mark.critical
-def test_tutor_dashboard_jobs_board(page: Page, base_url: str, tutor_credentials):
+def test_tutor_dashboard_jobs_board(page: Page, base_url: str, api_key: str, tutor_credentials):
     """
     Jobs board tab pane is the default active section at /dashboard/tutoring-section/.
     page-dashboard-tutoring-section.php:97 sets show/active on div#jobs_board.
     Covers: Jobs board section renders with filter form and at least one result.
     """
-    _login(page, base_url, tutor_credentials["email"], tutor_credentials["password"])
+    _login(page, base_url, tutor_credentials["email"], tutor_credentials["password"], api_key)
     page.goto(f"{base_url}{TUTORING_URL}", wait_until="domcontentloaded", timeout=90000)
     expect(page.locator("div#tutor_dash_tabs")).to_be_visible()
     expect(page.locator("div#jobs_board")).to_be_visible()
@@ -90,13 +92,13 @@ def test_tutor_dashboard_jobs_board(page: Page, base_url: str, tutor_credentials
 
 @pytest.mark.tutors
 @pytest.mark.critical
-def test_tutor_dashboard_timesheet_entry(page: Page, base_url: str, tutor_credentials):
+def test_tutor_dashboard_timesheet_entry(page: Page, base_url: str, api_key: str, tutor_credentials):
     """
     The Submit a timesheet tab pane is present in the DOM at /dashboard/tutoring-section/.
     page-dashboard-tutoring-section.php:102 renders div#submit_a_timesheet.
     Covers: Submit a timesheet section renders the job list entry point.
     """
-    _login(page, base_url, tutor_credentials["email"], tutor_credentials["password"])
+    _login(page, base_url, tutor_credentials["email"], tutor_credentials["password"], api_key)
     page.goto(f"{base_url}{TUTORING_URL}", wait_until="domcontentloaded", timeout=90000)
     assert page.locator("div#submit_a_timesheet").count() > 0, (
         "#submit_a_timesheet pane not found in DOM at /dashboard/tutoring-section/"
@@ -109,7 +111,7 @@ def test_tutor_dashboard_timesheet_entry(page: Page, base_url: str, tutor_creden
 # ── Batch F — tutor login tests ───────────────────────────────────────────────
 
 @pytest.mark.tutors
-def test_tutor_jobs_board_filter_returns_results(page: Page, base_url: str, tutor_credentials):
+def test_tutor_jobs_board_filter_returns_results(page: Page, base_url: str, api_key: str, tutor_credentials):
     """
     The jobs board filter on /dashboard/tutoring-section/ accepts a subject
     selection and fires an AJAX call (ot_jobs_board_filter via JS in
@@ -119,7 +121,7 @@ def test_tutor_jobs_board_filter_returns_results(page: Page, base_url: str, tuto
     after the AJAX populates div.jobs_board_content.
     Covers: 'Jobs board filter returns AJAX results'.
     """
-    _login(page, base_url, tutor_credentials["email"], tutor_credentials["password"])
+    _login(page, base_url, tutor_credentials["email"], tutor_credentials["password"], api_key)
     page.goto(f"{base_url}{TUTORING_URL}", wait_until="domcontentloaded", timeout=90000)
     # #jobs_board_filter is injected by the jobs_board AJAX (ot_dash_ajax_handler?content=jobs_board).
     # On local Laragon this AJAX can take 50+ seconds — wait up to 90s for it.
@@ -152,7 +154,7 @@ def test_tutor_jobs_board_filter_returns_results(page: Page, base_url: str, tuto
 
 
 @pytest.mark.tutors
-def test_tutor_stripe_connect_section_renders(page: Page, base_url: str, tutor_credentials):
+def test_tutor_stripe_connect_section_renders(page: Page, base_url: str, api_key: str, tutor_credentials):
     """
     The Stripe Connect section at /dashboard/profile/#stripe_connect renders
     content via ot_dash_ajax_handle (content=stripe_connect). Shows either
@@ -162,7 +164,7 @@ def test_tutor_stripe_connect_section_renders(page: Page, base_url: str, tutor_c
     tutor_stripe_connect_id — both states are accepted here. Manual check
     required to confirm the prompt appears on a fresh account.
     """
-    _login(page, base_url, tutor_credentials["email"], tutor_credentials["password"])
+    _login(page, base_url, tutor_credentials["email"], tutor_credentials["password"], api_key)
     # domcontentloaded avoids 30s timeout waiting for Stripe CDN resources
     page.goto(f"{base_url}{PROFILE_URL}#stripe_connect", wait_until="domcontentloaded")
     page.wait_for_load_state("networkidle", timeout=20000)
@@ -183,14 +185,14 @@ def test_tutor_stripe_connect_section_renders(page: Page, base_url: str, tutor_c
 
 
 @pytest.mark.tutors
-def test_tutor_availability_grid_renders(page: Page, base_url: str, tutor_credentials):
+def test_tutor_availability_grid_renders(page: Page, base_url: str, api_key: str, tutor_credentials):
     """
     The availability grid at /dashboard/profile/#my_availability renders the
     [tutor_availability] shortcode output — #tutor_availability_holder with
     the slot grid inside div.tutor-avail-wrap.
     Covers: 'Tutor dashboard availability slot grid renders'.
     """
-    _login(page, base_url, tutor_credentials["email"], tutor_credentials["password"])
+    _login(page, base_url, tutor_credentials["email"], tutor_credentials["password"], api_key)
     page.goto(f"{base_url}{PROFILE_URL}#my_availability", wait_until="domcontentloaded")
     page.wait_for_load_state("networkidle", timeout=20000)
     _activate_profile_tab(page, "my_availability")
@@ -221,7 +223,7 @@ def test_tutor_availability_grid_renders(page: Page, base_url: str, tutor_creden
 
 @pytest.mark.tutors
 @pytest.mark.critical
-def test_tutor_availability_grid_saves(page: Page, base_url: str, tutor_credentials):
+def test_tutor_availability_grid_saves(page: Page, base_url: str, api_key: str, tutor_credentials):
     """
     Clicking an availability cell, confirming the save, and reloading the
     section causes the changed slot state to persist.
@@ -229,7 +231,7 @@ def test_tutor_availability_grid_saves(page: Page, base_url: str, tutor_credenti
     verifies the cell retained its new state.
     Covers: 'Saving availability grid fires AJAX; slot count persists after reload'.
     """
-    _login(page, base_url, tutor_credentials["email"], tutor_credentials["password"])
+    _login(page, base_url, tutor_credentials["email"], tutor_credentials["password"], api_key)
     page.goto(f"{base_url}{PROFILE_URL}#my_availability", wait_until="domcontentloaded")
     page.wait_for_load_state("networkidle", timeout=20000)
 
@@ -294,7 +296,7 @@ def test_tutor_availability_grid_saves(page: Page, base_url: str, tutor_credenti
 
 
 @pytest.mark.tutors
-def test_tutor_dashboard_invoices_renders(page: Page, base_url: str, tutor_credentials):
+def test_tutor_dashboard_invoices_renders(page: Page, base_url: str, api_key: str, tutor_credentials):
     """
     The Invoices section at /dashboard/tutoring-section/#invoices loads its
     content via ot_dash_ajax_handle (content=invoices). Empty state is
@@ -302,7 +304,7 @@ def test_tutor_dashboard_invoices_renders(page: Page, base_url: str, tutor_crede
     invoices exist.
     Covers: 'Tutor dashboard invoices section renders (empty state acceptable)'.
     """
-    _login(page, base_url, tutor_credentials["email"], tutor_credentials["password"])
+    _login(page, base_url, tutor_credentials["email"], tutor_credentials["password"], api_key)
     # Navigate with hash — hash-nav JS activates #invoices tab pane
     page.goto(f"{base_url}{TUTORING_URL}#invoices", wait_until="domcontentloaded")
     page.wait_for_selector("#invoices", timeout=15000)
@@ -345,7 +347,7 @@ def test_timesheet_wizard_renders_stripe_connect_check(
     """
     job = create_test_job(base_url, api_key, stage=4, tutor_id=meet_now_tutor_id, job_type="EA job")
 
-    _login(page, base_url, tutor_credentials["email"], tutor_credentials["password"])
+    _login(page, base_url, tutor_credentials["email"], tutor_credentials["password"], api_key)
     page.goto(f"{base_url}/jobs/{job['job_id']}/#timesheet", wait_until="domcontentloaded")
 
     expect(page.locator("#timesheet h2:has-text('Connect to Stripe')")).to_be_visible(timeout=15000)
@@ -373,7 +375,7 @@ def test_eb_job_timesheet_submission_creates_timesheet_and_redirects(
     """
     job = create_test_job(base_url, api_key, stage=4, tutor_id=meet_now_tutor_id, job_type="EB job")
 
-    _login(page, base_url, tutor_credentials["email"], tutor_credentials["password"])
+    _login(page, base_url, tutor_credentials["email"], tutor_credentials["password"], api_key)
     page.goto(f"{base_url}/jobs/{job['job_id']}/#timesheet", wait_until="domcontentloaded")
 
     submit_student_name_if_shown(page)
@@ -406,7 +408,7 @@ def test_duplicate_timesheet_check_shows_warning(
     """
     job = create_test_job(base_url, api_key, stage=4, tutor_id=meet_now_tutor_id, job_type="EB job")
 
-    _login(page, base_url, tutor_credentials["email"], tutor_credentials["password"])
+    _login(page, base_url, tutor_credentials["email"], tutor_credentials["password"], api_key)
 
     # First submission — establishes a timesheet for the current month/year.
     page.goto(f"{base_url}/jobs/{job['job_id']}/#timesheet", wait_until="domcontentloaded")
@@ -475,7 +477,7 @@ def test_bill_timesheet_in_stripe_creates_real_invoice(
         client_email=stripe_client["client_email"],
     )
 
-    _login(page, base_url, tutor_credentials["email"], tutor_credentials["password"])
+    _login(page, base_url, tutor_credentials["email"], tutor_credentials["password"], api_key)
     page.goto(f"{base_url}/jobs/{job['job_id']}/#timesheet", wait_until="domcontentloaded")
     submit_student_name_if_shown(page)
     complete_goal_wizard_via_skip(page)

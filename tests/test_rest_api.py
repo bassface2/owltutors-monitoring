@@ -14,18 +14,20 @@ import requests
 from playwright.sync_api import Page, expect
 from utils.details import write_detail
 from utils.get_rest_nonce import get_rest_nonce
+from utils.recaptcha_bypass import inject_recaptcha_bypass
 import pytest
 
 REST_ENDPOINT = "/wp-json/main/v1/ot_data_endpoint"
 LOGIN_URL = "/login/"
 
 
-def _login(page: Page, base_url: str, email: str, password: str):
+def _login(page: Page, base_url: str, email: str, password: str, api_key: str):
     page.goto(f"{base_url}{LOGIN_URL}")
     expect(page.locator("#ot_login")).to_be_visible()
     page.wait_for_load_state("networkidle")
     page.locator("#ot_login_name").fill(email)
     page.locator("#pw1").fill(password)
+    inject_recaptcha_bypass(page, api_key, form_id="ot_login")
     page.locator("#login_submit").click()
     page.wait_for_url(lambda url: LOGIN_URL not in url, timeout=30000)
 
@@ -69,7 +71,7 @@ def test_rest_schools_endpoint_filters_by_subject(page: Page, base_url: str, cli
     See docs/rest-api.md — the subject param is normalised (spaces stripped,
     'Plus' stripped, lowercased) before being matched against the taxonomy.
     """
-    _login(page, base_url, client_credentials["email"], client_credentials["password"])
+    _login(page, base_url, client_credentials["email"], client_credentials["password"], api_key)
     nonce = get_rest_nonce(page, base_url, api_key)
     resp = page.request.get(
         f"{base_url}{REST_ENDPOINT}?request_type=schools&subject=11%20Plus",
@@ -94,7 +96,7 @@ def test_rest_papers_endpoint_filters_by_subject(page: Page, base_url: str, clie
     per docs/rest-api.md. Requires a logged-in session plus a valid
     X-WP-Nonce header — see the schools test above for why.
     """
-    _login(page, base_url, client_credentials["email"], client_credentials["password"])
+    _login(page, base_url, client_credentials["email"], client_credentials["password"], api_key)
     nonce = get_rest_nonce(page, base_url, api_key)
     resp = page.request.get(
         f"{base_url}{REST_ENDPOINT}?request_type=papers&subject=maths",

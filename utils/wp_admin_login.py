@@ -2,10 +2,12 @@ import re
 
 from playwright.sync_api import Page, expect
 
+from utils.recaptcha_bypass import inject_recaptcha_bypass
+
 LOGIN_URL = "/login/"
 
 
-def login_wp_admin(page: Page, base_url: str, email: str, password: str):
+def login_wp_admin(page: Page, base_url: str, email: str, password: str, api_key: str):
     """
     Log in via the custom OT '/login/' front-end form (#ot_login) — the same
     one every other fixture in this suite uses for clients/tutors/applicants
@@ -32,6 +34,7 @@ def login_wp_admin(page: Page, base_url: str, email: str, password: str):
     expect(page.locator("#ot_login")).to_be_visible()
     page.locator("#ot_login_name").fill(email)
     page.locator("#pw1").fill(password)
+    inject_recaptcha_bypass(page, api_key, form_id="ot_login")
     page.locator("#login_submit").click()
     page.wait_for_url(lambda url: LOGIN_URL not in url, timeout=30000)
     page.wait_for_load_state("domcontentloaded")

@@ -5,6 +5,7 @@ from playwright.sync_api import Page, expect
 from utils.auth import auth_headers
 from utils.cleanup import delete_test_posts
 from utils.details import write_detail
+from utils.recaptcha_bypass import inject_recaptcha_bypass
 from utils.test_status_records import get_test_status_record, reset_status_field
 from utils.wc_checkout import complete_native_wc_checkout
 import pytest
@@ -161,6 +162,7 @@ def test_dbs_checkout_completes_for_logged_in_tutor(page: Page, base_url: str, a
     expect(page.locator("#ot_login")).to_be_visible()
     page.locator("#ot_login_name").fill(tutor_credentials["email"])
     page.locator("#pw1").fill(tutor_credentials["password"])
+    inject_recaptcha_bypass(page, api_key, form_id="ot_login")
     page.locator("#login_submit").click()
     page.wait_for_url(lambda u: "/login" not in u, timeout=30000)
 
@@ -192,7 +194,7 @@ def test_dbs_checkout_completes_for_logged_in_tutor(page: Page, base_url: str, a
 
 
 @pytest.mark.content
-def test_dbs_fee_form_gated_to_tutor_or_admin(page: Page, base_url: str, tutor_credentials):
+def test_dbs_fee_form_gated_to_tutor_or_admin(page: Page, base_url: str, api_key: str, tutor_credentials):
     """
     single-product.php's $ot_staff_gated_slugs gate restricts the DBS fee
     product (native WC add-to-cart, same template code path as the CEM fix
@@ -215,6 +217,7 @@ def test_dbs_fee_form_gated_to_tutor_or_admin(page: Page, base_url: str, tutor_c
     # Logged-in tutor sees the native add-to-cart form
     page.locator("#ot_login_name").fill(tutor_credentials["email"])
     page.locator("#pw1").fill(tutor_credentials["password"])
+    inject_recaptcha_bypass(page, api_key, form_id="ot_login")
     page.locator("#login_submit").click()
     page.wait_for_url(lambda url: "/login" not in url, timeout=30000)
 

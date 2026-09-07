@@ -7,6 +7,8 @@ import pytest
 import requests
 from playwright.sync_api import Browser
 
+from utils.recaptcha_bypass import inject_recaptcha_bypass
+
 
 _LIVE_DOMAIN   = "owltutors.co.uk"
 _ALLOW_LIVE_ENV = "OWL_TEST_ALLOW_LIVE"
@@ -716,6 +718,7 @@ def stage3_job(
     tutor_page.wait_for_load_state("domcontentloaded")
     tutor_page.locator("#ot_login_name").fill(tutor_credentials["email"])
     tutor_page.locator("#pw1").fill(tutor_credentials["password"])
+    inject_recaptcha_bypass(tutor_page, api_key, form_id="ot_login")
     tutor_page.locator("#login_submit").click()
     tutor_page.wait_for_url(lambda url: LOGIN_URL not in url, timeout=90000)
 
@@ -869,6 +872,7 @@ def live_job_with_timesheet(browser, base_url, api_key, meet_now_tutor_id, tutor
         tutor_page.goto(f"{base_url}/login/")
         tutor_page.locator("#ot_login_name").fill(tutor_credentials["email"])
         tutor_page.locator("#pw1").fill(tutor_credentials["password"])
+        inject_recaptcha_bypass(tutor_page, api_key, form_id="ot_login")
         tutor_page.locator("#login_submit").click()
         tutor_page.wait_for_url(lambda url: "/login/" not in url, timeout=30000)
 

@@ -32,7 +32,7 @@ DASHBOARD_PAGES = [
 @pytest.mark.misc
 @pytest.mark.parametrize("page_slug", DASHBOARD_PAGES)
 def test_admin_reports_and_data_pages_load_without_fatal(
-    page: Page, base_url: str, admin_credentials, page_slug: str
+    page: Page, base_url: str, api_key: str, admin_credentials, page_slug: str
 ):
     """
     Every admin Reports/Data page renders without a PHP fatal or a blank
@@ -49,7 +49,7 @@ def test_admin_reports_and_data_pages_load_without_fatal(
     function-scoped in this suite's fixture setup; acceptable overhead for a
     smoke test that's expected to run infrequently, not on every commit.
     """
-    login_wp_admin(page, base_url, admin_credentials["email"], admin_credentials["password"])
+    login_wp_admin(page, base_url, admin_credentials["email"], admin_credentials["password"], api_key)
 
     resp = page.goto(f"{base_url}/wp-admin/admin.php?page={page_slug}", wait_until="domcontentloaded")
     assert resp is not None and resp.status < 500, (

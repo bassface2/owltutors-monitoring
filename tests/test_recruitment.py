@@ -11,6 +11,7 @@ from utils.apply import (
 )
 from utils.cleanup import delete_test_posts
 from utils.details import write_detail
+from utils.recaptcha_bypass import inject_recaptcha_bypass
 from utils.test_status_records import get_test_status_record, reset_status_field
 
 FIXTURES_DIR = Path(__file__).parent / "fixtures"
@@ -122,7 +123,7 @@ def test_tutor_registration_submits(page: Page, base_url: str, cleanup_after):
 
 @pytest.mark.recruitment
 def test_preapplicant_application_page_loads(
-    page: Page, base_url: str, preapplicant_credentials
+    page: Page, base_url: str, api_key: str, preapplicant_credentials
 ):
     """
     A logged-in pre-applicant visiting /tutor-section/application/ sees the
@@ -136,6 +137,7 @@ def test_preapplicant_application_page_loads(
     page.wait_for_load_state("networkidle")
     page.locator("#ot_login_name").fill(preapplicant_credentials["email"])
     page.locator("#pw1").fill(preapplicant_credentials["password"])
+    inject_recaptcha_bypass(page, api_key, form_id="ot_login")
     page.locator("#login_submit").click()
     # Pre-applicants are redirected to /tutor-section/application/
     page.wait_for_url(
@@ -279,7 +281,7 @@ def test_email_already_registered_error(page: Page, base_url: str, preapplicant_
 
 @pytest.mark.recruitment
 def test_preapplicant_section_nav_forward_back(
-    page: Page, base_url: str, preapplicant_credentials
+    page: Page, base_url: str, api_key: str, preapplicant_credentials
 ):
     """
     The application form's 'Previous' button navigates back to the prior
@@ -294,6 +296,7 @@ def test_preapplicant_section_nav_forward_back(
     page.wait_for_load_state("networkidle")
     page.locator("#ot_login_name").fill(preapplicant_credentials["email"])
     page.locator("#pw1").fill(preapplicant_credentials["password"])
+    inject_recaptcha_bypass(page, api_key, form_id="ot_login")
     page.locator("#login_submit").click()
     page.wait_for_url(re.compile(r".*/tutor-section/application/"), timeout=30000)
 
@@ -384,7 +387,7 @@ def test_client_role_on_application_page(
 
 @pytest.mark.recruitment
 def test_preapplicant_availability_tab_has_grid(
-    page: Page, base_url: str, preapplicant_credentials
+    page: Page, base_url: str, api_key: str, preapplicant_credentials
 ):
     """
     The availability section in the pre-applicant application form renders
@@ -400,6 +403,7 @@ def test_preapplicant_availability_tab_has_grid(
     page.wait_for_load_state("networkidle")
     page.locator("#ot_login_name").fill(preapplicant_credentials["email"])
     page.locator("#pw1").fill(preapplicant_credentials["password"])
+    inject_recaptcha_bypass(page, api_key, form_id="ot_login")
     page.locator("#login_submit").click()
     page.wait_for_url(re.compile(r".*/tutor-section/application/"), timeout=30000)
 
@@ -434,7 +438,7 @@ def test_preapplicant_availability_tab_has_grid(
 
 @pytest.mark.recruitment
 def test_preapplicant_availability_save_and_persist(
-    page: Page, base_url: str, preapplicant_credentials
+    page: Page, base_url: str, api_key: str, preapplicant_credentials
 ):
     """
     Saving a slot via the tutor_availability_save AJAX action in the
@@ -467,6 +471,7 @@ def test_preapplicant_availability_save_and_persist(
     page.wait_for_load_state("networkidle")
     page.locator("#ot_login_name").fill(preapplicant_credentials["email"])
     page.locator("#pw1").fill(preapplicant_credentials["password"])
+    inject_recaptcha_bypass(page, api_key, form_id="ot_login")
     page.locator("#login_submit").click()
     page.wait_for_url(re.compile(r".*/tutor-section/application/"), timeout=30000)
 
@@ -533,13 +538,14 @@ def test_preapplicant_availability_save_and_persist(
 # Batch A — Applicant dashboard (P2)
 # ─────────────────────────────────────────────────────────────────────────────
 
-def _login_as_applicant(page: Page, base_url: str, creds: dict):
+def _login_as_applicant(page: Page, base_url: str, creds: dict, api_key: str):
     """Log in as the given applicant and land on /tutor-section/application/."""
     page.goto(f"{base_url}{LOGIN_URL}")
     expect(page.locator("#ot_login")).to_be_visible()
     page.wait_for_load_state("networkidle")
     page.locator("#ot_login_name").fill(creds["email"])
     page.locator("#pw1").fill(creds["password"])
+    inject_recaptcha_bypass(page, api_key, form_id="ot_login")
     page.locator("#login_submit").click()
     page.wait_for_url(lambda url: "/login/" not in url, timeout=30000)
     page.goto(f"{base_url}{APPLICATION_URL}")
@@ -565,14 +571,14 @@ def _force_applicant_tab(page: Page, section_id: str):
 
 
 @pytest.mark.recruitment
-def test_applicant_dashboard_loads(page: Page, base_url: str, applicant_credentials):
+def test_applicant_dashboard_loads(page: Page, base_url: str, api_key: str, applicant_credentials):
     """
     A logged-in applicant visiting /tutor-section/application/ sees the
     applicant dashboard: main wrapper (#tutorFormBox), the Stage 1 confirmed
     well, and all expected section wells in the DOM.
     Covers: 'Applicant dashboard loads with section tabs'.
     """
-    _login_as_applicant(page, base_url, applicant_credentials)
+    _login_as_applicant(page, base_url, applicant_credentials, api_key)
 
     expect(page.locator("#tutorFormBox")).to_be_visible()
     # Two h1s on the page (theme header + form h1) — target the form's h1 specifically
@@ -598,7 +604,7 @@ def test_applicant_dashboard_loads(page: Page, base_url: str, applicant_credenti
 
 
 @pytest.mark.recruitment
-def test_applicant_completion_scores(page: Page, base_url: str, applicant_credentials):
+def test_applicant_completion_scores(page: Page, base_url: str, api_key: str, applicant_credentials):
     """
     Section wells show correct status for a fresh applicant:
     - Stage 1 is under review (app_approved=false for a new submission)
@@ -606,7 +612,7 @@ def test_applicant_completion_scores(page: Page, base_url: str, applicant_creden
     - Availability: completed (slots were saved during the pre-applicant form)
     Covers: 'Document completion scores show correct icons'.
     """
-    _login_as_applicant(page, base_url, applicant_credentials)
+    _login_as_applicant(page, base_url, applicant_credentials, api_key)
 
     # Stage 1: under review, not yet approved
     expect(page.locator("span.status_text.review")).to_be_visible()
@@ -628,14 +634,14 @@ def test_applicant_completion_scores(page: Page, base_url: str, applicant_creden
 
 
 @pytest.mark.recruitment
-def test_applicant_references_not_sent(page: Page, base_url: str, applicant_credentials):
+def test_applicant_references_not_sent(page: Page, base_url: str, api_key: str, applicant_credentials):
     """
     The references tab in the applicant dashboard shows 'We haven't sent your
     references out yet' when no reference CPT records exist for this user.
     The .ot_reference_table is absent because $references_made=false.
     Covers: '"References not yet sent" message when CPTs do not exist'.
     """
-    _login_as_applicant(page, base_url, applicant_credentials)
+    _login_as_applicant(page, base_url, applicant_credentials, api_key)
 
     # Navigate to references tab
     page.evaluate("""
@@ -663,14 +669,14 @@ def test_applicant_references_not_sent(page: Page, base_url: str, applicant_cred
 
 @pytest.mark.recruitment
 def test_applicant_availability_tab_has_grid(
-    page: Page, base_url: str, applicant_credentials
+    page: Page, base_url: str, api_key: str, applicant_credentials
 ):
     """
     The availability section in the applicant dashboard renders the
     [tutor_availability] shortcode with slot buttons present after JS init.
     Covers: 'Applicant — availability tab has slot grid'.
     """
-    _login_as_applicant(page, base_url, applicant_credentials)
+    _login_as_applicant(page, base_url, applicant_credentials, api_key)
 
     page.evaluate("""
         () => {
@@ -704,7 +710,7 @@ def test_applicant_availability_tab_has_grid(
 
 @pytest.mark.recruitment
 def test_applicant_availability_save_and_persist(
-    page: Page, base_url: str, applicant_credentials
+    page: Page, base_url: str, api_key: str, applicant_credentials
 ):
     """
     Saving a slot via tutor_availability_save AJAX in the applicant dashboard
@@ -756,7 +762,7 @@ def test_applicant_availability_save_and_persist(
             '})'
         )
 
-    _login_as_applicant(page, base_url, applicant_credentials)
+    _login_as_applicant(page, base_url, applicant_credentials, api_key)
     _open_avail_grid()
 
     # Save a distinct slot so it doesn't overlap the fixture's slot [day=0, slot=16]

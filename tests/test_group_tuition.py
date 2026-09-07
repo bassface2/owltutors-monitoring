@@ -5,6 +5,7 @@ from playwright.sync_api import Page, expect
 
 from utils.auth import auth_headers
 from utils.details import write_detail
+from utils.recaptcha_bypass import inject_recaptcha_bypass
 
 LOGIN_URL = "/login/"
 
@@ -190,6 +191,7 @@ def test_client_dashboard_shows_course_bookings(page: Page, base_url: str, api_k
     page.wait_for_load_state("domcontentloaded")
     page.locator("#ot_login_name").fill(data["client_email"])
     page.locator("#pw1").fill(data["client_password"])
+    inject_recaptcha_bypass(page, api_key, form_id="ot_login")
     page.locator("#login_submit").click()
     page.wait_for_url(lambda url: LOGIN_URL not in url, timeout=90000)
 
@@ -206,7 +208,7 @@ def test_client_dashboard_shows_course_bookings(page: Page, base_url: str, api_k
 
 
 @pytest.mark.courses
-def test_course_materials_visible_to_logged_in_tutor(page: Page, base_url: str, tutor_credentials, group_course_id: str):
+def test_course_materials_visible_to_logged_in_tutor(page: Page, base_url: str, api_key: str, tutor_credentials, group_course_id: str):
     """
     The course's own tutor (tutor_id matches the logged-in user — TEST_TUTOR_EMAIL
     is the same person as TEST_MEET_NOW_TUTOR_ID, which the fixture course is
@@ -221,6 +223,7 @@ def test_course_materials_visible_to_logged_in_tutor(page: Page, base_url: str, 
     page.wait_for_load_state("domcontentloaded")
     page.locator("#ot_login_name").fill(tutor_credentials["email"])
     page.locator("#pw1").fill(tutor_credentials["password"])
+    inject_recaptcha_bypass(page, api_key, form_id="ot_login")
     page.locator("#login_submit").click()
     page.wait_for_url(lambda url: LOGIN_URL not in url, timeout=90000)
 

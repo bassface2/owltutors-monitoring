@@ -59,7 +59,7 @@ def test_client_contact_log_modal_renders_in_job_edit_metabox(
     browser.
     """
     job = create_test_job(base_url, api_key, stage=3, tutor_id=meet_now_tutor_id)
-    login_wp_admin(page, base_url, admin_credentials["email"], admin_credentials["password"])
+    login_wp_admin(page, base_url, admin_credentials["email"], admin_credentials["password"], api_key)
 
     page.goto(f"{base_url}/wp-admin/post.php?post={job['job_id']}&action=edit", wait_until="domcontentloaded")
 
@@ -88,7 +88,7 @@ def test_tutor_contact_log_entry_via_job_edit_metabox(
     the native user-edit.php ACF-repeater save path.
     """
     job = create_test_job(base_url, api_key, stage=4, tutor_id=meet_now_tutor_id)
-    login_wp_admin(page, base_url, admin_credentials["email"], admin_credentials["password"])
+    login_wp_admin(page, base_url, admin_credentials["email"], admin_credentials["password"], api_key)
 
     page.goto(f"{base_url}/wp-admin/post.php?post={job['job_id']}&action=edit", wait_until="domcontentloaded")
 
@@ -120,7 +120,7 @@ def test_client_contact_log_entry_via_jobs_list(
     """
     job = create_test_job(base_url, api_key, stage=3, tutor_id=meet_now_tutor_id)
     job_id = job["job_id"]
-    login_wp_admin(page, base_url, admin_credentials["email"], admin_credentials["password"])
+    login_wp_admin(page, base_url, admin_credentials["email"], admin_credentials["password"], api_key)
 
     page.goto(
         f"{base_url}/wp-admin/edit.php?post_type=jobs&orderby=ID&order=desc",
@@ -220,7 +220,7 @@ def test_client_contact_log_entry_via_user_profile(
     assert client.get("success"), f"owl_create_test_client failed: {client}"
     client_id = client["client_id"]
 
-    login_wp_admin(page, base_url, admin_credentials["email"], admin_credentials["password"])
+    login_wp_admin(page, base_url, admin_credentials["email"], admin_credentials["password"], api_key)
     page.goto(f"{base_url}/wp-admin/user-edit.php?user_id={client_id}", wait_until="domcontentloaded")
 
     notes = f"Automated native-profile client contact log test {uuid.uuid4().hex[:8]}"
@@ -267,7 +267,7 @@ def test_tutor_contact_log_entry_via_user_profile(
     before = get_test_contact_log_entries(base_url, api_key, "tutor", tutor_id)
     before_count = before["count"]
 
-    login_wp_admin(page, base_url, admin_credentials["email"], admin_credentials["password"])
+    login_wp_admin(page, base_url, admin_credentials["email"], admin_credentials["password"], api_key)
     page.goto(f"{base_url}/wp-admin/user-edit.php?user_id={tutor_id}", wait_until="domcontentloaded")
 
     notes = f"Automated native-profile tutor contact log test {uuid.uuid4().hex[:8]}"
@@ -324,7 +324,7 @@ def test_tutor_contact_log_entry_via_tutor_list(
     before = get_test_contact_log_entries(base_url, api_key, "tutor", tutor_id)
     before_count = before["count"]
 
-    login_wp_admin(page, base_url, admin_credentials["email"], admin_credentials["password"])
+    login_wp_admin(page, base_url, admin_credentials["email"], admin_credentials["password"], api_key)
     # Search rather than a bare role listing -- the tutor role list runs to
     # thousands of rows (real, synced production accounts), well past the
     # default per-page pagination, so the fixture tutor's row is very

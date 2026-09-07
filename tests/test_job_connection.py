@@ -5,18 +5,20 @@ from playwright.sync_api import Page, expect
 
 from utils.create_test_job import create_test_job
 from utils.details import write_detail
+from utils.recaptcha_bypass import inject_recaptcha_bypass
 
 JOB_URL = "/jobs/"
 LOGIN_URL = "/login/"
 
 
-def _login(page: Page, base_url: str, email: str, password: str):
+def _login(page: Page, base_url: str, email: str, password: str, api_key: str):
     """Log in via the front-end login form."""
     page.goto(f"{base_url}{LOGIN_URL}")
     expect(page.locator("#ot_login")).to_be_visible()
     page.wait_for_load_state("domcontentloaded")
     page.locator("#ot_login_name").fill(email)
     page.locator("#pw1").fill(password)
+    inject_recaptcha_bypass(page, api_key, form_id="ot_login")
     page.locator("#login_submit").click()
     # 90s: the post-login redirect can be slow (client may be sent to an existing
     # job page; the load event needs time to settle on a cold server).
@@ -30,7 +32,7 @@ def _login(page: Page, base_url: str, email: str, password: str):
 @pytest.mark.jobs
 @pytest.mark.critical
 def test_stage3_job_renders_applicant_cards(
-    page: Page, base_url: str, stage3_job
+    page: Page, base_url: str, api_key: str, stage3_job
 ):
     """
     Logged-in client on a Stage 3 job sees applicant cards, the sort dropdown,
@@ -38,7 +40,7 @@ def test_stage3_job_renders_applicant_cards(
     Covers: 'Stage 3 job page renders applicant cards and sort dropdown'
     and 'Logged-in client on Stage 3 job sees tutors to review dashboard state'.
     """
-    _login(page, base_url, stage3_job["client_email"], stage3_job["client_password"])
+    _login(page, base_url, stage3_job["client_email"], stage3_job["client_password"], api_key)
     page.goto(f"{base_url}{JOB_URL}{stage3_job['job_id']}/")
 
     expect(page.locator(".applicants")).to_be_visible()
@@ -59,14 +61,14 @@ def test_stage3_job_renders_applicant_cards(
 @pytest.mark.jobs
 @pytest.mark.critical
 def test_connect_with_tutor_triggers_modal(
-    page: Page, base_url: str, stage3_job
+    page: Page, base_url: str, api_key: str, stage3_job
 ):
     """
     Clicking the 'Connect with tutor' button fires the ot_job_identify_modal
     AJAX and renders a modal (accept-terms, payment, or login depending on state).
     Covers: '"Connect with tutor" button present, triggers ot_job_identify_modal AJAX'.
     """
-    _login(page, base_url, stage3_job["client_email"], stage3_job["client_password"])
+    _login(page, base_url, stage3_job["client_email"], stage3_job["client_password"], api_key)
     page.goto(f"{base_url}{JOB_URL}{stage3_job['job_id']}/")
 
     btn = page.locator("button.connect_with_tutor").first
@@ -95,7 +97,7 @@ def test_connect_with_tutor_triggers_modal(
 
 @pytest.mark.jobs
 def test_accept_terms_modal_renders(
-    page: Page, base_url: str, stage3_job
+    page: Page, base_url: str, api_key: str, stage3_job
 ):
     """
     The modal that appears after clicking 'Connect with tutor' has rendered
@@ -104,7 +106,7 @@ def test_accept_terms_modal_renders(
     interactive element.
     Covers: 'Accept-terms modal renders with tutor photo, name, and rate'.
     """
-    _login(page, base_url, stage3_job["client_email"], stage3_job["client_password"])
+    _login(page, base_url, stage3_job["client_email"], stage3_job["client_password"], api_key)
     page.goto(f"{base_url}{JOB_URL}{stage3_job['job_id']}/")
 
     page.locator("button.connect_with_tutor").first.click()
@@ -133,7 +135,7 @@ def test_accept_terms_modal_renders(
 
 @pytest.mark.jobs
 def test_logged_out_stage3_sees_login_modal(
-    page: Page, base_url: str, stage3_job
+    page: Page, base_url: str, api_key: str, stage3_job
 ):
     """
     A logged-out visitor on a Stage 3 job page sees the inline login form.
@@ -149,6 +151,7 @@ def test_logged_out_stage3_sees_login_modal(
     # Log in using the stage3_job client credentials (password set during fixture setup)
     page.locator("#ot_login_name").fill(stage3_job["client_email"])
     page.locator("#pw1").fill(stage3_job["client_password"])
+    inject_recaptcha_bypass(page, api_key, form_id="ot_login")
     page.locator("#login_submit").click()
 
     # The inline #ot_login form does a real full-page POST to wp-login.php
@@ -191,7 +194,7 @@ def test_logged_out_stage3_sees_login_modal(
 @pytest.mark.jobs
 @pytest.mark.critical
 def test_stripe_return_auto_triggers_modal(
-    page: Page, base_url: str, stage3_job
+    page: Page, base_url: str, api_key: str, stage3_job
 ):
     """
     Navigating to a Stage 3 job with ?payment_method_added=true&from_stripe=true
@@ -199,7 +202,7 @@ def test_stripe_return_auto_triggers_modal(
     Covers: 'Stripe-return flow — page load with payment_method_added=true&
     from_stripe=true auto-triggers modal without click'.
     """
-    _login(page, base_url, stage3_job["client_email"], stage3_job["client_password"])
+    _login(page, base_url, stage3_job["client_email"], stage3_job["client_password"], api_key)
     page.goto(
         f"{base_url}{JOB_URL}{stage3_job['job_id']}/"
         f"?payment_method_added=true&from_stripe=true&tutor_id={stage3_job['tutor_id']}"
@@ -223,7 +226,7 @@ def test_stripe_return_auto_triggers_modal(
 @pytest.mark.jobs
 @pytest.mark.critical
 def test_accept_terms_advances_to_stage4(
-    page: Page, base_url: str, stage3_job
+    page: Page, base_url: str, api_key: str, stage3_job
 ):
     """
     Logged-in Active client accepts terms and connects with the tutor,
@@ -237,7 +240,7 @@ def test_accept_terms_advances_to_stage4(
 
     Covers: 'Accept terms advancing to Stage 4'.
     """
-    _login(page, base_url, stage3_job["client_email"], stage3_job["client_password"])
+    _login(page, base_url, stage3_job["client_email"], stage3_job["client_password"], api_key)
     page.goto(f"{base_url}{JOB_URL}{stage3_job['job_id']}/")
 
     btn = page.locator("button.connect_with_tutor").first
@@ -309,7 +312,7 @@ def test_magic_link_auto_login(page: Page, base_url: str, magic_link_params):
 
 @pytest.mark.jobs
 def test_client_stage4_job_shows_connected_tutor(
-    page: Page, base_url: str, stage3_job
+    page: Page, base_url: str, api_key: str, stage3_job
 ):
     """
     Logged-in client on a Stage 4 job sees the 'Your chosen tutor' section with
@@ -321,7 +324,7 @@ def test_client_stage4_job_shows_connected_tutor(
 
     Covers: 'Logged-in client on Stage 4 job sees tutor selected dashboard state'.
     """
-    _login(page, base_url, stage3_job["client_email"], stage3_job["client_password"])
+    _login(page, base_url, stage3_job["client_email"], stage3_job["client_password"], api_key)
     page.goto(f"{base_url}{JOB_URL}{stage3_job['job_id']}/", wait_until="domcontentloaded")
 
     connected_section = page.locator(
@@ -344,7 +347,7 @@ def test_client_stage4_job_shows_connected_tutor(
 
 @pytest.mark.jobs
 @pytest.mark.critical
-def test_live_job_shows_timesheet_feedback(page: Page, base_url: str, live_job_with_timesheet):
+def test_live_job_shows_timesheet_feedback(page: Page, base_url: str, api_key: str, live_job_with_timesheet):
     """
     Confirms the real, already-working mechanism that distinguishes a Live
     job's client view from a Stage 4 one: single-jobs.php only calls
@@ -369,7 +372,7 @@ def test_live_job_shows_timesheet_feedback(page: Page, base_url: str, live_job_w
     #monthly_report field submitted, not a guessed-at fixture value.
     Covers: 'Live job — correct dashboard state'.
     """
-    _login(page, base_url, live_job_with_timesheet["client_email"], live_job_with_timesheet["client_password"])
+    _login(page, base_url, live_job_with_timesheet["client_email"], live_job_with_timesheet["client_password"], api_key)
     page.goto(f"{base_url}{JOB_URL}{live_job_with_timesheet['job_id']}/", wait_until="domcontentloaded")
 
     feedback_section = page.locator("section[aria-label='Timesheet feedback']")
@@ -459,7 +462,7 @@ def test_first_time_client_prompted_to_set_password(
 
 @pytest.mark.tutors
 def test_tutor_dashboard_active_jobs_renders_cards(
-    page: Page, base_url: str, stage3_job, tutor_credentials
+    page: Page, base_url: str, api_key: str, stage3_job, tutor_credentials
 ):
     """
     The tutor dashboard's "Submit a timesheet" tab (#submit_a_timesheet, real
@@ -485,7 +488,7 @@ def test_tutor_dashboard_active_jobs_renders_cards(
     is exactly what qualifies a job as "live" for this query.
     Covers: 'Active jobs section renders cards for tutor with live placement'.
     """
-    _login(page, base_url, tutor_credentials["email"], tutor_credentials["password"])
+    _login(page, base_url, tutor_credentials["email"], tutor_credentials["password"], api_key)
     page.goto(f"{base_url}/dashboard/tutoring-section/", wait_until="domcontentloaded", timeout=90000)
 
     # Neither direct hash-navigation nor clicking the real sidebar link

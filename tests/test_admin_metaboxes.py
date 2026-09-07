@@ -45,7 +45,7 @@ def test_job_scheduled_events_metabox_reschedule_and_unschedule(
     job_id = job["job_id"]
     schedule_test_event(base_url, api_key, hook="ot_jobs_schedule_stage_1_more_info_1", post_id=job_id)
 
-    login_wp_admin(page, base_url, admin_credentials["email"], admin_credentials["password"])
+    login_wp_admin(page, base_url, admin_credentials["email"], admin_credentials["password"], api_key)
     page.goto(f"{base_url}/wp-admin/post.php?post={job_id}&action=edit", wait_until="domcontentloaded")
 
     metabox = page.locator("#job_scheduled_events_metabox")
@@ -95,7 +95,7 @@ def test_student_client_metabox_shows_correct_name_order(
     student_id = fixture["student_id"]
     expected_name = f"{fixture['first_name']} {fixture['last_name']}"
 
-    login_wp_admin(page, base_url, admin_credentials["email"], admin_credentials["password"])
+    login_wp_admin(page, base_url, admin_credentials["email"], admin_credentials["password"], api_key)
     page.goto(f"{base_url}/wp-admin/post.php?post={student_id}&action=edit", wait_until="domcontentloaded")
 
     metabox = page.locator("#student_meta_box_student_client")
@@ -146,7 +146,7 @@ def test_legacy_client_students_metabox_scoped_to_client(
     client_a = create_test_legacy_client_fixture(base_url, api_key, first_name="Testbot-Ambrose", last_name="Testbot-Quill")
     client_b = create_test_legacy_client_fixture(base_url, api_key, first_name="Testbot-Rosalind", last_name="Testbot-Pryce")
 
-    login_wp_admin(page, base_url, admin_credentials["email"], admin_credentials["password"])
+    login_wp_admin(page, base_url, admin_credentials["email"], admin_credentials["password"], api_key)
     page.goto(f"{base_url}/wp-admin/post.php?post={client_a['client_id']}&action=edit", wait_until="domcontentloaded")
 
     metabox = page.locator("#job_meta_box_client_students")
@@ -189,7 +189,7 @@ def test_make_client_user_stores_client_id_as_array(
     fixture = create_test_legacy_client_fixture(base_url, api_key)
     job_id = fixture["job_id"]
 
-    login_wp_admin(page, base_url, admin_credentials["email"], admin_credentials["password"])
+    login_wp_admin(page, base_url, admin_credentials["email"], admin_credentials["password"], api_key)
     resp = page.request.get(f"{base_url}/wp-admin/admin-ajax.php?action=ot_make_client_user&job_id={job_id}")
     assert resp.ok, f"ot_make_client_user AJAX call failed: {resp.status}"
     # utf-8-sig, not resp.json(): at least one included file in this legacy
