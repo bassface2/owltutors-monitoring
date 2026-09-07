@@ -153,35 +153,6 @@ def _auth_headers() -> dict:
 
 
 @pytest.fixture(scope="session")
-def browser_type_launch_args(browser_type_launch_args):
-    """Test-environment-only: stop Chromium's third-party-cookie-phaseout
-    trial from applying to this suite's runs.
-
-    Found 7 Sept 2026 investigating the WooCommerce-native checkout cluster
-    (test_dbs_checkout_completes_for_logged_in_tutor and others): every one
-    of them fills the Stripe card fields fine, clicks "place order", then
-    never reaches order-received within 30s. Diagnostics showed a wall of
-    "Third-party cookie will be blocked" warnings plus repeated 401s from
-    Stripe's own api.stripe.com/v1/consumers/sessions/lookup (Stripe's
-    "Link" saved-payment-method feature) -- Stripe's Link integration is
-    documented to sometimes hang the actual payment submission, not just
-    degrade gracefully, when third-party storage access is blocked.
-    GitHub Actions' headless Chromium enforces this far more aggressively
-    by default than a normal local browser does.
-
-    --test-third-party-cookie-phaseout=false is Chrome's own documented
-    flag for exactly this situation -- automated tests that need
-    third-party-cookie behaviour to match pre-phaseout Chrome, without
-    disabling the wider Privacy Sandbox test infrastructure. Test-harness
-    only; nothing about the live site's real Stripe/Link configuration
-    changes.
-    """
-    args = list(browser_type_launch_args.get("args", []))
-    args.append("--test-third-party-cookie-phaseout=false")
-    return {**browser_type_launch_args, "args": args}
-
-
-@pytest.fixture(scope="session")
 def browser_context_args(browser_context_args):
     """Supply http_credentials so Playwright can respond to any 401 challenges."""
     user = os.environ.get("TEST_HTTP_USER", "").strip()
