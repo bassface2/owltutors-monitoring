@@ -1,6 +1,7 @@
 import re
 import requests
 from playwright.sync_api import Page, expect
+from utils.auth import auth_headers
 from utils.cleanup import delete_test_posts
 from utils.details import write_detail
 from utils.wc_checkout import complete_native_wc_checkout
@@ -121,6 +122,7 @@ def test_general_basket_checkout_flow(page: Page, base_url: str, api_key: str, c
     order_resp = requests.post(
         f"{base_url}/wp-admin/admin-ajax.php",
         data={"action": "owl_get_test_order_fields", "api_key": api_key, "order_id": order_id},
+        headers=auth_headers(base_url),
         timeout=15,
     )
     order_resp.raise_for_status()

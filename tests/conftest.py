@@ -139,6 +139,17 @@ def _basic_auth_token() -> str | None:
     return None
 
 
+def _auth_headers() -> dict:
+    """Headers dict for raw `requests` calls: Basic Auth (if configured) plus
+    a real User-Agent — see _basic_auth_token() above for the credential
+    precedence."""
+    headers = {"User-Agent": "Mozilla/5.0 (compatible; owltutors-monitoring/1.0)"}
+    token = _basic_auth_token()
+    if token:
+        headers["Authorization"] = f"Basic {token}"
+    return headers
+
+
 @pytest.fixture(scope="session")
 def browser_context_args(browser_context_args):
     """Supply http_credentials so Playwright can respond to any 401 challenges."""
@@ -772,10 +783,7 @@ def stage3_job(
     # ot_job_identify_modal to return the accept-terms form rather than the
     # add-payment-method form, enabling the full Stage 4 connect flow.
     import requests as _requests
-    token = _basic_auth_token()
-    _headers = {"User-Agent": "Mozilla/5.0 (compatible; owltutors-monitoring/1.0)"}
-    if token:
-        _headers["Authorization"] = f"Basic {token}"
+    _headers = _auth_headers()
     _resp = _requests.post(
         f"{base_url}/wp-admin/admin-ajax.php",
         data={"action": "owl_set_client_active", "api_key": api_key, "email": client_email},
@@ -875,6 +883,7 @@ def live_job_with_timesheet(browser, base_url, api_key, meet_now_tutor_id, tutor
     fields_resp = requests.post(
         f"{base_url}/wp-admin/admin-ajax.php",
         data={"action": "owl_get_test_job_fields", "api_key": api_key, "job_id": job_id},
+        headers=_auth_headers(),
         timeout=15,
     )
     fields_resp.raise_for_status()
@@ -885,6 +894,7 @@ def live_job_with_timesheet(browser, base_url, api_key, meet_now_tutor_id, tutor
     flag_resp = requests.post(
         f"{base_url}/wp-admin/admin-ajax.php",
         data={"action": "owl_flag_test_timesheet", "api_key": api_key, "timesheet_id": timesheet_id},
+        headers=_auth_headers(),
         timeout=15,
     )
     flag_resp.raise_for_status()
@@ -903,6 +913,7 @@ def live_job_with_timesheet(browser, base_url, api_key, meet_now_tutor_id, tutor
     requests.post(
         f"{base_url}/wp-admin/admin-ajax.php",
         data={"action": "owl_delete_test_posts", "api_key": api_key},
+        headers=_auth_headers(),
         timeout=15,
     )
 

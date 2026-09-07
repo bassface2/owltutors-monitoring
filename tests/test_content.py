@@ -2,6 +2,7 @@ import json
 import re
 import requests
 from playwright.sync_api import Page, expect
+from utils.auth import auth_headers
 from utils.cleanup import delete_test_posts
 from utils.details import write_detail
 from utils.test_status_records import get_test_status_record, reset_status_field
@@ -122,6 +123,7 @@ def test_cem_checkout_captures_fields_to_order(page: Page, base_url: str, api_ke
     order_resp = requests.post(
         f"{base_url}/wp-admin/admin-ajax.php",
         data={"action": "owl_get_test_order_fields", "api_key": api_key, "order_id": order_id},
+        headers=auth_headers(base_url),
         timeout=15,
     )
     order_resp.raise_for_status()
@@ -174,6 +176,7 @@ def test_dbs_checkout_completes_for_logged_in_tutor(page: Page, base_url: str, a
     order_resp = requests.post(
         f"{base_url}/wp-admin/admin-ajax.php",
         data={"action": "owl_get_test_order_fields", "api_key": api_key, "order_id": order_id},
+        headers=auth_headers(base_url),
         timeout=15,
     )
     order_resp.raise_for_status()

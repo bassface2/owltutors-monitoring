@@ -6,6 +6,7 @@ import requests
 import pytest
 from playwright.sync_api import Page, expect
 
+from utils.auth import auth_headers
 from utils.cleanup import delete_test_posts
 from utils.details import write_detail
 from utils.get_test_job_fields import get_test_job_fields
@@ -538,6 +539,7 @@ def test_contact_form_existing_email_logged_out(
     client_resp = requests.post(
         f"{base_url}/wp-admin/admin-ajax.php",
         data={"action": "owl_create_test_client", "api_key": api_key},
+        headers=auth_headers(base_url),
         timeout=15,
     )
     client_resp.raise_for_status()

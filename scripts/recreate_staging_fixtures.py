@@ -88,6 +88,10 @@ def main() -> int:
         print(f"Error: owl_repair_test_fixtures failed: {result}", file=sys.stderr)
         return 1
 
+    recaptcha = result.get("recaptcha")
+    if recaptcha:
+        print(f"== reCAPTCHA: {recaptcha} ==\n")
+
     client = result["client"]
     print(f"== Test client: {client['email']} ==")
     print(f"  {client['status']} -- ID {client['id']}, roles: {', '.join(client['roles'])}")

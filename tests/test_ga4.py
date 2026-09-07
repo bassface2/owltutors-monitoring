@@ -54,8 +54,8 @@ def test_ga4_session_storage_set_on_load(page: Page, base_url: str):
 
     assert initial_url, "sessionStorage['initial_url'] not set after first page load"
     assert traffic_source, "sessionStorage['traffic_source_r'] not set after first page load"
-    assert "owltutors" in initial_url, (
-        f"initial_url should be an owltutors URL, got: {initial_url!r}"
+    assert any(d in initial_url for d in _ALLOWED_DOMAIN_SUBSTRINGS), (
+        f"initial_url should be on a recognised owltutors domain, got: {initial_url!r}"
     )
 
     write_detail("test_ga4_session_storage_set_on_load", {

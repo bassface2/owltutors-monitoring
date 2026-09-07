@@ -3,6 +3,7 @@ import re
 import pytest
 from playwright.sync_api import Page, expect
 
+from utils.auth import auth_headers
 from utils.details import write_detail
 
 COURSE_ID = "201665"  # "Test Group Course — Monitoring Fixture", permanent local dev-site fixture
@@ -149,6 +150,7 @@ def test_client_dashboard_shows_course_bookings(page: Page, base_url: str, api_k
     resp = requests.post(
         f"{base_url}/wp-admin/admin-ajax.php",
         data={"action": "owl_create_test_course_enrolment", "api_key": api_key, "course_id": COURSE_ID},
+        headers=auth_headers(base_url),
         timeout=30,
     )
     resp.raise_for_status()

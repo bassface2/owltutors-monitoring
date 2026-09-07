@@ -6,9 +6,17 @@ import requests
 import pytest
 from playwright.sync_api import Page, expect
 
+from utils.auth import auth_headers, is_basic_auth_configured
 from utils.details import write_detail
 
 LOGIN_URL = "/login/"
+
+_BASIC_AUTH_SKIP_REASON = (
+    "Target environment is gated by platform-level HTTP Basic Auth (e.g. "
+    "otdev1602) -- it blocks this deliberately unauthenticated request before "
+    "WordPress/REST routing ever sees it, the same as it would a real Stripe "
+    "webhook. Only runs where there's no such gate (local/production)."
+)
 
 # Real local-environment webhook signing secrets, from the switch block in
 # services/stripe/system.php's ot_handle_stripe_webhook_connection() — the
@@ -56,6 +64,7 @@ def _fake_event(object_type: str, event_type: str, timesheet_id: str = "99999999
 
 @pytest.mark.tutors
 @pytest.mark.critical
+@pytest.mark.skipif(is_basic_auth_configured(), reason=_BASIC_AUTH_SKIP_REASON)
 def test_platform_webhook_returns_200_for_valid_signed_payload(base_url: str):
     """
     /wp-json/owl/v1/stripe-webhook-platform accepts a genuinely-signed Stripe
@@ -85,6 +94,7 @@ def test_platform_webhook_returns_200_for_valid_signed_payload(base_url: str):
 
 
 @pytest.mark.tutors
+@pytest.mark.skipif(is_basic_auth_configured(), reason=_BASIC_AUTH_SKIP_REASON)
 def test_webhook_invalid_signature_returns_400_not_500(base_url: str):
     """
     Regression test: a webhook payload with an invalid signature must return
@@ -120,6 +130,7 @@ def test_webhook_invalid_signature_returns_400_not_500(base_url: str):
 
 
 @pytest.mark.tutors
+@pytest.mark.skipif(is_basic_auth_configured(), reason=_BASIC_AUTH_SKIP_REASON)
 def test_connect_webhook_returns_200_for_valid_signed_payload(base_url: str):
     """
     /wp-json/owl/v1/stripe-webhook-connect accepts a genuinely-signed Stripe
@@ -187,6 +198,7 @@ def _create_and_login_disposable_client(page: Page, base_url: str, api_key: str)
     resp = requests.post(
         f"{base_url}/wp-admin/admin-ajax.php",
         data={"action": "owl_create_test_client", "api_key": api_key},
+        headers=auth_headers(base_url),
         timeout=15,
     )
     resp.raise_for_status()
@@ -287,6 +299,7 @@ def test_post_checkout_return_saves_card_and_sets_client_active(
     fields_resp = requests.post(
         f"{base_url}/wp-admin/admin-ajax.php",
         data={"action": "owl_get_test_client_fields", "api_key": api_key, "client_id": client["client_id"]},
+        headers=auth_headers(base_url),
         timeout=15,
     )
     fields = fields_resp.json()
@@ -334,6 +347,7 @@ def test_prepaid_card_rejected(page: Page, base_url: str, api_key: str):
     fields_resp = requests.post(
         f"{base_url}/wp-admin/admin-ajax.php",
         data={"action": "owl_get_test_client_fields", "api_key": api_key, "client_id": client["client_id"]},
+        headers=auth_headers(base_url),
         timeout=15,
     )
     fields = fields_resp.json()

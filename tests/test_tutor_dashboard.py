@@ -2,6 +2,7 @@
 import re
 import requests
 from playwright.sync_api import Page, expect
+from utils.auth import auth_headers
 from utils.create_test_job import create_test_job
 from utils.details import write_detail
 from utils.get_test_job_fields import get_test_job_fields
@@ -464,6 +465,7 @@ def test_bill_timesheet_in_stripe_creates_real_invoice(
     stripe_client = requests.post(
         f"{base_url}/wp-admin/admin-ajax.php",
         data={"action": "owl_create_test_stripe_client", "api_key": api_key},
+        headers=auth_headers(base_url),
         timeout=15,
     ).json()
     assert stripe_client.get("success"), f"owl_create_test_stripe_client failed: {stripe_client}"
@@ -492,6 +494,7 @@ def test_bill_timesheet_in_stripe_creates_real_invoice(
             "timesheet_id": timesheet_id,
             "job_id": job["job_id"],
         },
+        headers=auth_headers(base_url),
         timeout=30,
     ).json()
     assert invoice_resp.get("success"), f"owl_trigger_stripe_invoice_create failed: {invoice_resp}"

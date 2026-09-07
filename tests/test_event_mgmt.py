@@ -6,6 +6,7 @@ wp_schedule_single_event() timestamp (hours to days away in production).
 """
 import requests
 from playwright.sync_api import Page
+from utils.auth import auth_headers
 from utils.create_test_job import create_test_job
 from utils.create_test_ams_post import create_test_ams_post
 from utils.create_test_duplicate_jobs import create_test_duplicate_jobs
@@ -140,6 +141,7 @@ def test_duplicate_job_event_notifies_client(base_url: str, api_key: str, cleanu
     client_resp = requests.post(
         f"{base_url}/wp-admin/admin-ajax.php",
         data={"action": "owl_create_test_client", "api_key": api_key},
+        headers=auth_headers(base_url),
         timeout=15,
     )
     client_resp.raise_for_status()

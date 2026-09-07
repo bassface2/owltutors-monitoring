@@ -12,6 +12,7 @@ docs/TESTING_SYSTEM.md's Tier 2 notes.
 """
 import uuid
 from playwright.sync_api import Page, expect
+from utils.auth import auth_headers
 from utils.create_test_job import create_test_job
 from utils.get_test_contact_log_entries import get_test_contact_log_entries
 from utils.wp_admin_login import login_wp_admin
@@ -211,6 +212,7 @@ def test_client_contact_log_entry_via_user_profile(
     resp = requests.post(
         f"{base_url}/wp-admin/admin-ajax.php",
         data={"action": "owl_create_test_client", "api_key": api_key},
+        headers=auth_headers(base_url),
         timeout=15,
     )
     resp.raise_for_status()
