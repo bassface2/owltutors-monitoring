@@ -21,6 +21,7 @@ jobs:
     runs-on: ubuntu-22.04
     permissions:
       contents: write
+      actions: write   # needed to delete old test-videos artifacts (see the last step)
     steps:
       # Diagnostic only, added 5 Sept 2026 to test the "shared/overlapping
       # runner IP" theory behind the otdev1602 403s -- see docs/TO_DO.md.
@@ -151,22 +152,22 @@ jobs:
           TEST_HTTP_USER: ${{ secrets.TEST_HTTP_USER }}
           TEST_HTTP_PASS: ${{ secrets.TEST_HTTP_PASS }}
           PYTEST_MARKERS: ${{ github.event.inputs.pytest_markers }}
-        # --video=on records every test; utils/prune_videos.py below then
-        # deletes anything that doesn't earn a place per
-        # docs/TESTING_REBUILD_SPEC.md Day 8 (critical tests always, everything
-        # else only on failure) rather than varying --video per test, which
-        # pytest-playwright doesn't support.
+        # --video=retain-on-failure: pytest-playwright's own built-in mode --
+        # records everything, then deletes any test's video itself once that
+        # test passes, no separate prune step needed. Changed 7 Sept 2026
+        # from --video=on + a hand-rolled utils/prune_videos.py that also
+        # unconditionally kept every critical test's video (pass or fail):
+        # with dozens of critical tests, that meant paying storage for a
+        # passing test's video every single day, which has no debugging
+        # value -- only a failure's video is ever actually opened.
         run: |
           if [ -n "$PYTEST_MARKERS" ]; then
             echo "Targeted run -- pytest -m \"$PYTEST_MARKERS\""
-            pytest -m "$PYTEST_MARKERS" --video=on --output=test-results --json-report --json-report-file=pytest-report.json -v
+            pytest -m "$PYTEST_MARKERS" --video=retain-on-failure --output=test-results --json-report --json-report-file=pytest-report.json -v
           else
-            pytest --video=on --output=test-results --json-report --json-report-file=pytest-report.json -v
+            pytest --video=retain-on-failure --output=test-results --json-report --json-report-file=pytest-report.json -v
           fi
         continue-on-error: true
-
-      - name: Prune non-critical passing videos
-        run: python utils/prune_videos.py pytest-report.json test-results
 
       - name: Write results.json
         run: python utils/reporter.py pytest-report.json
@@ -227,6 +228,33 @@ jobs:
           # — avoids the repo-bloat risk of committing video the way
           # screenshots are today. Each day's run is its own artifact, so
           # there's no accumulating path to prune — the previous day's videos
-          # simply expire.
-          retention-days: 14
+          # simply expire. This 7-day figure is now just a safety-net backstop
+          # (7 Sept 2026): the "Delete old video artifacts" step below actively
+          # deletes anything older than 2 days on every run, so in the normal
+          # case this expiry is never actually reached — it only matters if
+          # that step itself fails.
+          retention-days: 7
           if-no-files-found: ignore
+
+      # Actively deletes video artifacts older than 2 days, rather than
+      # relying solely on retention-days above. Deliberately a 2-day window,
+      # not "delete everything but the run that just finished": the critical-
+      # regression alert email links to its run's video, and that email has
+      # been observed to arrive with a real delay (over an hour, once) --
+      # deleting the artifact the moment the *next* run finishes would risk
+      # the linked video already being gone before anyone opens the email.
+      # A short rolling window keeps real storage savings (vs. the old 14-day
+      # blanket retention) without breaking that alert -> video path.
+      - name: Delete old video artifacts
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          CUTOFF=$(date -u -d '2 days ago' +%Y-%m-%dT%H:%M:%SZ)
+          echo "Deleting test-videos artifacts created before $CUTOFF"
+          gh api --paginate "repos/${{ github.repository }}/actions/artifacts" \
+            -q ".artifacts[] | select(.name == \"test-videos\" and .created_at < \"$CUTOFF\") | .id" \
+          | while read -r artifact_id; do
+              echo "Deleting artifact $artifact_id"
+              gh api -X DELETE "repos/${{ github.repository }}/actions/artifacts/$artifact_id" || true
+            done

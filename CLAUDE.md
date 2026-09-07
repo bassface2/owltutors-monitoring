@@ -37,11 +37,10 @@ All Stage 3, Stage 4, and magic-link test jobs are created on demand by session 
 | `utils/cleanup.py` | Calls the WP cleanup endpoint after data-creating tests |
 | `utils/details.py` | Writes per-test metadata (job IDs, screenshots) to `details.json` |
 | `utils/reporter.py` | Converts pytest JSON report to `results.json` for the dashboard widget |
-| `utils/prune_videos.py` | CI-only: deletes videos for tests that aren't critical or failing (Day 8) |
 | `utils/check_critical_regressions.py` | CI-only: diffs critical-test status vs. the last run, emails on new failures (Day 8) |
 | `utils/get_test_manifest.py` | Calls `owl_get_test_manifest` to read the dashboard widget's manifest (Days 11-12) |
 | `tests/test_manifest_drift.py` | Asserts the manifest and the actual pytest test functions match 1:1 (Days 11-12) |
-| `.github/workflows/smoke-tests.yml` | Scheduled daily at 7am UTC; manual trigger available. `--video=on` + prune, then a critical-regression check, then the results-branch push, then a video artifact upload (14-day retention) |
+| `.github/workflows/smoke-tests.yml` | Scheduled daily at 7am UTC; manual trigger available (optionally scoped to a `pytest_markers` filter, which skips the results-branch push and regression alert). `--video=retain-on-failure`, then a critical-regression check, then the results-branch push, then a video artifact upload (7-day retention) |
 
 ---
 
