@@ -239,6 +239,7 @@ def _diagnostics(page, request):
     console_errors = []
     page_errors = []
     failed_requests = []
+    error_responses = []
 
     def on_response(response):
         if "admin-ajax.php" in response.url:
@@ -247,6 +248,13 @@ def _diagnostics(page, request):
             except Exception:
                 body = "<unreadable>"
             ajax_responses.append(f"  [response {response.status}] {response.url} -> {body[:300]}")
+        # Browser-generated "Failed to load resource: ... 401 ()" console
+        # messages carry no URL of their own -- added 7 Sept 2026 while
+        # investigating the WooCommerce-native checkout cluster (repeated
+        # 401s during Stripe Elements checkout, cause unknown) specifically
+        # to recover which resource actually 4xx/5xx'd, not just that one did.
+        if response.status >= 400:
+            error_responses.append(f"  [response {response.status}] {response.request.method} {response.url}")
 
     def on_console(msg):
         line = f"[console:{msg.type}] {msg.text}"
@@ -283,9 +291,11 @@ def _diagnostics(page, request):
         pass
 
     lines = ajax_responses + ajax_failed
-    if lines or page_errors or dom:
+    if lines or error_responses or page_errors or dom:
         print(f"\n[diag: {request.node.name}]")
         for line in lines:
+            print(line)
+        for line in error_responses:
             print(line)
         for line in page_errors:
             print(f"  [pageerror] {line}")
@@ -323,7 +333,7 @@ def _diagnostics(page, request):
         exception_text=exception_text,
         console_errors=console_errors,
         page_errors=page_errors,
-        failed_requests=failed_requests,
+        failed_requests=failed_requests + error_responses,
     )
 
     write_detail(test_name, {
@@ -332,7 +342,7 @@ def _diagnostics(page, request):
         "step":            step_name,
         "console_errors":  console_errors[-10:],
         "page_errors":     page_errors[-10:],
-        "failed_requests": failed_requests[-10:],
+        "failed_requests": (failed_requests + error_responses)[-10:],
     })
 
 
