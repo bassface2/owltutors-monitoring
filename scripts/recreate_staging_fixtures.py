@@ -108,6 +108,32 @@ def main() -> int:
     else:
         print("\n(TEST_TUTOR_EMAIL/PASSWORD not set -- skipping tutor fixture check)")
 
+    # Best-effort: the pytest session fixture (group_course_id, test_group_tuition.py)
+    # calls this same idempotent endpoint itself on first use, so this isn't
+    # required for correctness -- it's here purely so a failure surfaces early
+    # in this step's log rather than deep into the test run, matching the
+    # client/tutor checks above.
+    try:
+        course_data = {
+            "action": "owl_repair_test_group_course",
+            "api_key": api_key,
+            "tutor_id": os.environ.get("TEST_MEET_NOW_TUTOR_ID", ""),
+        }
+        course_resp = requests.post(
+            f"{clean_url}/wp-admin/admin-ajax.php", data=course_data, headers=headers, timeout=15
+        )
+        course_resp.raise_for_status()
+        course_result = course_resp.json()
+        if course_result.get("success"):
+            print(
+                f"\n== Test group course: course_id {course_result['course_id']} "
+                f"({course_result['status']}) =="
+            )
+        else:
+            print(f"\nWARNING: owl_repair_test_group_course failed: {course_result}", file=sys.stderr)
+    except Exception as e:
+        print(f"\nWARNING: owl_repair_test_group_course request failed: {e}", file=sys.stderr)
+
     print("\nDone.")
     return 0
 

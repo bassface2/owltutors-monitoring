@@ -6,9 +6,37 @@ from playwright.sync_api import Page, expect
 from utils.auth import auth_headers
 from utils.details import write_detail
 
-COURSE_ID = "201665"  # "Test Group Course — Monitoring Fixture", permanent local dev-site fixture
-CHECKOUT_URL = f"/course-checkout/?course_id={COURSE_ID}"
 LOGIN_URL = "/login/"
+
+
+@pytest.fixture(scope="session")
+def group_course_id(base_url: str, api_key: str) -> str:
+    """Idempotently finds/creates the permanent "Test Group Course —
+    Monitoring Fixture" via owl_repair_test_group_course, rather than a
+    hardcoded post ID. That fixture (post 201665) was only ever created
+    directly on the local dev site (docs/TESTING_SYSTEM.md, "Bookable course
+    on dev site") -- staging's post IDs come from an independent production-
+    synced database, so the local ID always failed there with "must be a
+    group_course" (found 7 Sept 2026). Passes TEST_MEET_NOW_TUTOR_ID through
+    as the course's assigned tutor if set -- needed for
+    test_course_materials_visible_to_logged_in_tutor, harmless to omit for
+    the guest-checkout tests that don't need a tutor at all.
+    """
+    import requests
+    resp = requests.post(
+        f"{base_url}/wp-admin/admin-ajax.php",
+        data={
+            "action": "owl_repair_test_group_course",
+            "api_key": api_key,
+            "tutor_id": os.environ.get("TEST_MEET_NOW_TUTOR_ID", ""),
+        },
+        headers=auth_headers(base_url),
+        timeout=30,
+    )
+    resp.raise_for_status()
+    data = resp.json()
+    assert data.get("success"), f"owl_repair_test_group_course failed: {data}"
+    return data["course_id"]
 
 # Stripe test card — always succeeds, no 3DS challenge.
 TEST_CARD_NUMBER = "4242424242424242"
@@ -31,7 +59,7 @@ def _fill_stripe_card(page: Page):
 
 @pytest.mark.courses
 @pytest.mark.critical
-def test_course_checkout_page_loads_for_guest(page: Page, base_url: str):
+def test_course_checkout_page_loads_for_guest(page: Page, base_url: str, group_course_id: str):
     """
     A logged-out guest can load /course-checkout/?course_id={id} for a live,
     bookable course — the checkout form renders with student details, guest
@@ -39,7 +67,7 @@ def test_course_checkout_page_loads_for_guest(page: Page, base_url: str):
     client), and the Stripe Card Element.
     Covers: 'Course checkout page loads for a guest'.
     """
-    page.goto(f"{base_url}{CHECKOUT_URL}", wait_until="domcontentloaded")
+    page.goto(f"{base_url}/course-checkout/?course_id={group_course_id}", wait_until="domcontentloaded")
 
     expect(page.locator("#ot-course-checkout-form")).to_be_visible(timeout=15000)
     expect(page.locator("#student_name")).to_be_visible()
@@ -49,13 +77,13 @@ def test_course_checkout_page_loads_for_guest(page: Page, base_url: str):
     expect(page.locator("#course-pay-btn")).to_be_visible()
 
     write_detail("test_course_checkout_page_loads_for_guest", {
-        "message": f"Checkout page loaded for guest, course {COURSE_ID}",
+        "message": f"Checkout page loaded for guest, course {group_course_id}",
     })
 
 
 @pytest.mark.courses
 @pytest.mark.critical
-def test_course_payment_intent_ajax_returns_client_secret(page: Page, base_url: str):
+def test_course_payment_intent_ajax_returns_client_secret(page: Page, base_url: str, group_course_id: str):
     """
     Submitting the checkout form's guest + student details fires
     ot_course_create_payment_intent via AJAX first (before any card details are
@@ -65,7 +93,7 @@ def test_course_payment_intent_ajax_returns_client_secret(page: Page, base_url: 
     test_successful_course_payment_redirects_with_enrolment_confirmed).
     Covers: 'ot_course_create_payment_intent AJAX returns client_secret'.
     """
-    page.goto(f"{base_url}{CHECKOUT_URL}", wait_until="domcontentloaded")
+    page.goto(f"{base_url}/course-checkout/?course_id={group_course_id}", wait_until="domcontentloaded")
 
     unique = re.sub(r"[^0-9]", "", str(id(page)))[-8:]
     page.locator("#client_name").fill("Owl PI TestBot")
@@ -93,7 +121,7 @@ def test_course_payment_intent_ajax_returns_client_secret(page: Page, base_url: 
 
 @pytest.mark.courses
 @pytest.mark.critical
-def test_successful_course_payment_redirects_with_enrolment_confirmed(page: Page, base_url: str):
+def test_successful_course_payment_redirects_with_enrolment_confirmed(page: Page, base_url: str, group_course_id: str):
     """
     Full guest checkout: fill guest + student details, enter a Stripe test
     card (4242..., always succeeds, no 3DS), submit, and confirm the
@@ -106,7 +134,7 @@ def test_successful_course_payment_redirects_with_enrolment_confirmed(page: Page
     unique = re.sub(r"[^0-9]", "", str(id(page)))[-8:]
     client_email = f"testbot.course.pay.{unique}@owltutors.co.uk"
 
-    page.goto(f"{base_url}{CHECKOUT_URL}", wait_until="domcontentloaded")
+    page.goto(f"{base_url}/course-checkout/?course_id={group_course_id}", wait_until="domcontentloaded")
 
     page.locator("#client_name").fill("Owl Course TestBot")
     page.locator("#client_email").fill(client_email)
@@ -131,7 +159,7 @@ def test_successful_course_payment_redirects_with_enrolment_confirmed(page: Page
 
 
 @pytest.mark.courses
-def test_client_dashboard_shows_course_bookings(page: Page, base_url: str, api_key: str):
+def test_client_dashboard_shows_course_bookings(page: Page, base_url: str, api_key: str, group_course_id: str):
     """
     A client with an active course_enrolment sees the full-width 'My course
     bookings' section on /dashboard/, with the course title and amount paid.
@@ -149,7 +177,7 @@ def test_client_dashboard_shows_course_bookings(page: Page, base_url: str, api_k
     import requests
     resp = requests.post(
         f"{base_url}/wp-admin/admin-ajax.php",
-        data={"action": "owl_create_test_course_enrolment", "api_key": api_key, "course_id": COURSE_ID},
+        data={"action": "owl_create_test_course_enrolment", "api_key": api_key, "course_id": group_course_id},
         headers=auth_headers(base_url),
         timeout=30,
     )
@@ -178,7 +206,7 @@ def test_client_dashboard_shows_course_bookings(page: Page, base_url: str, api_k
 
 
 @pytest.mark.courses
-def test_course_materials_visible_to_logged_in_tutor(page: Page, base_url: str, tutor_credentials):
+def test_course_materials_visible_to_logged_in_tutor(page: Page, base_url: str, tutor_credentials, group_course_id: str):
     """
     The course's own tutor (tutor_id matches the logged-in user — TEST_TUTOR_EMAIL
     is the same person as TEST_MEET_NOW_TUTOR_ID, which the fixture course is
@@ -202,5 +230,5 @@ def test_course_materials_visible_to_logged_in_tutor(page: Page, base_url: str, 
     expect(page.locator('[name="material_description"]')).to_be_visible()
 
     write_detail("test_course_materials_visible_to_logged_in_tutor", {
-        "message": f"Course materials section visible for course {COURSE_ID}'s own tutor",
+        "message": f"Course materials section visible for course {group_course_id}'s own tutor",
     })
