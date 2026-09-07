@@ -1,36 +1,16 @@
 {
   "test_client_login": {
-    "message": "Failed \u2014 Timeout 30000ms exceeded. [2 JS error(s), e.g. 'requestStorageAccess not allowed'; 1 console error/warning(s)]",
-    "screenshot": "screenshots/test_client_login.png",
-    "step": null,
-    "console_errors": [
-      "[console:error] requestStorageAccess: Permission denied."
-    ],
-    "page_errors": [
-      "requestStorageAccess not allowed",
-      "reCAPTCHA Timeout"
-    ],
-    "failed_requests": []
+    "message": "Login accepted, client landed on dashboard"
   },
   "test_show_password_toggle": {
     "message": "Show Password checkbox correctly toggles the password field on /login and /tutor-section/application/"
   },
   "test_client_dashboard": {
-    "message": "Failed \u2014 Timeout 30000ms exceeded. [2 JS error(s), e.g. 'requestStorageAccess not allowed'; 1 console error/warning(s)]",
-    "screenshot": "screenshots/test_client_dashboard.png",
-    "step": null,
-    "console_errors": [
-      "[console:error] requestStorageAccess: Permission denied."
-    ],
-    "page_errors": [
-      "requestStorageAccess not allowed",
-      "reCAPTCHA Timeout"
-    ],
-    "failed_requests": []
+    "message": "Clients can log in and see the dashboard"
   },
   "test_contact_form_callback_submission": {
-    "message": "Callback enquiry submitted and redirected to job 202744; job_create_type verified against DB",
-    "job_id": "202744",
+    "message": "Callback enquiry submitted and redirected to job 202863; job_create_type verified against DB",
+    "job_id": "202863",
     "job_create_type": "Regular"
   },
   "test_contact_form_renders": {
@@ -57,18 +37,18 @@
     ]
   },
   "test_contact_form_tutor_submission": {
-    "message": "Tutor enquiry submitted and redirected to job 202746; job_create_type verified against DB",
-    "job_id": "202746",
+    "message": "Tutor enquiry submitted and redirected to job 202867; job_create_type verified against DB",
+    "job_id": "202867",
     "job_create_type": "Regular"
   },
   "test_contact_form_something_else": {
-    "message": "'Something else' enquiry submitted and redirected to job 202748; job_create_type verified against DB",
-    "job_id": "202748",
+    "message": "'Something else' enquiry submitted and redirected to job 202869; job_create_type verified against DB",
+    "job_id": "202869",
     "job_create_type": "Regular"
   },
   "test_contact_form_requested_tutors": {
-    "message": "Requested tutors flow submitted and redirected to job 202750; requested_job_members verified against DB",
-    "job_id": "202750",
+    "message": "Requested tutors flow submitted and redirected to job 202871; requested_job_members verified against DB",
+    "job_id": "202871",
     "tutor_ids": [
       "37464",
       "22999",
@@ -76,32 +56,49 @@
     ]
   },
   "test_new_client_banner": {
-    "message": "New client banner visible at https://otdev1602.wpengine.com/jobs/202752/?new_client=true&generate_lead=true&c=3540405691&job_status=1&job_create_type=regular"
+    "message": "New client banner visible at https://otdev1602.wpengine.com/jobs/202873/?new_client=true&generate_lead=true&c=3972700126&job_status=1&job_create_type=regular"
   },
   "test_contact_form_returning_client": {
-    "message": "Returning client job submitted and redirected to job 202756; client_id verified against DB",
-    "job_id": "202756",
-    "client_id": 40312
+    "message": "Returning client job submitted and redirected to job 202877; client_id verified against DB",
+    "job_id": "202877",
+    "client_id": 40385
   },
   "test_contact_form_existing_email_logged_out": {
-    "message": "Logged-out submission with an existing client's email correctly resolved to job 202758",
-    "job_id": "202758",
-    "client_id": 40313
+    "message": "Logged-out submission with an existing client's email correctly resolved to job 202879",
+    "job_id": "202879",
+    "client_id": 40386
   },
   "test_stage1_quality_check_fail": {
-    "message": "Short requirements triggered Stage 1 alert on job 202760",
-    "job_id": "202760"
+    "message": "Short requirements triggered Stage 1 alert on job 202881",
+    "job_id": "202881"
   },
   "test_health_safety_unchecked_job_creates": {
-    "message": "H&S unchecked: job still created at 202762; notes_on_status note must be verified in WP admin",
-    "job_id": "202762"
+    "message": "H&S unchecked: job still created at 202883; notes_on_status note must be verified in WP admin",
+    "job_id": "202883"
   },
   "test_duplicate_job_detection": {
-    "message": "Duplicate Maths job (job 202766) stayed at Stage 1 with duplicate warning",
-    "job_id": "202766"
+    "message": "Failed \u2014 Locator expected to be visible \u2014 waiting for locator(\".ot_single_job_duplicate_jobs\") [4 JS error(s), e.g. 'requestStorageAccess not allowed'; 7 console error/warning(s)]",
+    "screenshot": "screenshots/test_duplicate_job_detection.png",
+    "step": null,
+    "console_errors": [
+      "[console:error] requestStorageAccess: Permission denied.",
+      "[console:error] Failed to load resource: the server responded with a status of 404 ()",
+      "[console:error] requestStorageAccess: Permission denied.",
+      "[console:warning] Third-party cookie will be blocked. Learn more in the Issues tab.",
+      "[console:error] requestStorageAccess: Permission denied.",
+      "[console:warning] Third-party cookie will be blocked. Learn more in the Issues tab.",
+      "[console:warning] Third-party cookie will be blocked. Learn more in the Issues tab."
+    ],
+    "page_errors": [
+      "requestStorageAccess not allowed",
+      "ot_logged_in_client_script is not defined",
+      "requestStorageAccess not allowed",
+      "requestStorageAccess not allowed"
+    ],
+    "failed_requests": []
   },
   "test_admin_job_path_redirects": {
-    "message": "Admin job path redirected to wp-admin (not /jobs/): https://otdev1602.wpengine.com/wp-admin/post.php?post=202768&action=edit"
+    "message": "Admin job path redirected to wp-admin (not /jobs/): https://otdev1602.wpengine.com/wp-admin/post.php?post=202889&action=edit"
   },
   "test_blog_listing_loads": {
     "message": "Blog listing page loaded with article cards visible"
@@ -119,11 +116,11 @@
     "message": "CEM product page loaded with otcemmvp fields visible inside form.cart"
   },
   "test_cem_checkout_captures_fields_to_order": {
-    "message": "Failed \u2014 Timeout 30000ms exceeded. [12 failed request(s), e.g. 'GET https://js.stripe.com/v3/m-outer-3437aaddcdf6922d623e172c2d6f9278.html \u2014 net::ERR_ABORTED'; 40 console error/warning(s)]",
+    "message": "Failed \u2014 Timeout 30000ms exceeded. [5 failed request(s), e.g. 'GET https://merchant-ui-api.stripe.com/link/get-cookie?referrer_host=otdev1602.wpengine.com \u2014 net::\u2026'; 42 console error/warning(s)]",
     "screenshot": "screenshots/test_cem_checkout_captures_fields_to_order.png",
     "step": null,
     "console_errors": [
-      "[console:warning] [.WebGL-0x123c029f2200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)",
+      "[console:warning] [.WebGL-0x105c02b41b00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)",
       "[console:warning] Third-party cookie will be blocked. Learn more in the Issues tab.",
       "[console:warning] Third-party cookie will be blocked. Learn more in the Issues tab.",
       "[console:warning] Third-party cookie will be blocked. Learn more in the Issues tab.",
@@ -136,43 +133,45 @@
     ],
     "page_errors": [],
     "failed_requests": [
-      "GET https://api.stripe.com/v1/elements/sessions?deferred_intent[mode]=payment&deferred_intent[amount]=9750&deferred_intent[currency]=gbp&deferred_intent[payment_method_types][0]=card&currency=gbp&key=pk_live_5182e7KDIH3kBTRJvZKJM7Op2QcdQmZ7xH1TfJTma9RXC3y4RkNwVp16v9LD72PeBcDvYiqYPTWKLGBhudLQTlbaC00RYw2KNCt&_stripe_version=2026-03-25.dahlia&elements_init_source=stripe.elements&referrer_host=otdev1602.wpengine.com&stripe_js_id=625242df-cae1-43be-bfe6-496efeb4c2e6&locale=en-GB&browser_timezone=UTC&type=deferred_intent \u2014 net::ERR_ABORTED",
-      "POST https://r.stripe.com/b \u2014 net::ERR_ABORTED",
-      "POST https://r.stripe.com/b \u2014 net::ERR_ABORTED",
-      "GET https://api.stripe.com/v1/elements/sessions?deferred_intent[mode]=payment&deferred_intent[amount]=9750&deferred_intent[currency]=gbp&deferred_intent[payment_method_types][0]=card&deferred_intent[payment_method_types][1]=link&currency=gbp&key=pk_live_5182e7KDIH3kBTRJvZKJM7Op2QcdQmZ7xH1TfJTma9RXC3y4RkNwVp16v9LD72PeBcDvYiqYPTWKLGBhudLQTlbaC00RYw2KNCt&_stripe_version=2026-03-25.dahlia&elements_init_source=stripe.elements&referrer_host=otdev1602.wpengine.com&stripe_js_id=625242df-cae1-43be-bfe6-496efeb4c2e6&locale=en-GB&browser_timezone=UTC&type=deferred_intent \u2014 net::ERR_ABORTED",
-      "POST https://r.stripe.com/b \u2014 net::ERR_ABORTED",
-      "POST https://r.stripe.com/b \u2014 net::ERR_ABORTED",
-      "POST https://r.stripe.com/b \u2014 net::ERR_ABORTED",
-      "POST https://r.stripe.com/b \u2014 net::ERR_ABORTED",
-      "GET https://3f8f1949940f.w.hcaptcha.com/logo.png \u2014 net::ERR_ABORTED",
-      "GET https://bf56d18a4474.w.hcaptcha.com/logo.png \u2014 net::ERR_ABORTED"
+      "GET https://merchant-ui-api.stripe.com/link/get-cookie?referrer_host=otdev1602.wpengine.com \u2014 net::ERR_ABORTED",
+      "GET https://api.stripe.com/v1/elements/sessions?deferred_intent[mode]=payment&deferred_intent[amount]=9750&deferred_intent[currency]=gbp&deferred_intent[payment_method_types][0]=card&currency=gbp&key=pk_live_5182e7KDIH3kBTRJvZKJM7Op2QcdQmZ7xH1TfJTma9RXC3y4RkNwVp16v9LD72PeBcDvYiqYPTWKLGBhudLQTlbaC00RYw2KNCt&_stripe_version=2026-03-25.dahlia&elements_init_source=stripe.elements&referrer_host=otdev1602.wpengine.com&stripe_js_id=4101ce24-b761-4e62-8a19-07273782ce3d&locale=en-GB&browser_timezone=UTC&type=deferred_intent \u2014 net::ERR_ABORTED",
+      "GET https://api.stripe.com/v1/elements/sessions?deferred_intent[mode]=payment&deferred_intent[amount]=9750&deferred_intent[currency]=gbp&deferred_intent[payment_method_types][0]=card&deferred_intent[payment_method_types][1]=link&currency=gbp&key=pk_live_5182e7KDIH3kBTRJvZKJM7Op2QcdQmZ7xH1TfJTma9RXC3y4RkNwVp16v9LD72PeBcDvYiqYPTWKLGBhudLQTlbaC00RYw2KNCt&_stripe_version=2026-03-25.dahlia&elements_init_source=stripe.elements&referrer_host=otdev1602.wpengine.com&stripe_js_id=4101ce24-b761-4e62-8a19-07273782ce3d&locale=en-GB&browser_timezone=UTC&type=deferred_intent \u2014 net::ERR_ABORTED",
+      "GET https://e22a3e41a26f.w.hcaptcha.com/logo.png \u2014 net::ERR_ABORTED",
+      "GET https://a4398ea219c5.w.hcaptcha.com/logo.png \u2014 net::ERR_ABORTED"
     ]
   },
   "test_dbs_checkout_completes_for_logged_in_tutor": {
-    "message": "Failed \u2014 Timeout 30000ms exceeded. [2 JS error(s), e.g. 'requestStorageAccess not allowed'; 1 console error/warning(s)]",
+    "message": "Failed \u2014 Timeout 30000ms exceeded. [1 JS error(s), e.g. 'requestStorageAccess not allowed'; 8 failed request(s), e.g. 'GET https://otdev1602.wpengine.com/wp-admin/admin-ajax.php?action=ot_dash_ajax_handle&content=recom\u2026'; 64 console error/warning(s)]",
     "screenshot": "screenshots/test_dbs_checkout_completes_for_logged_in_tutor.png",
     "step": null,
     "console_errors": [
-      "[console:error] requestStorageAccess: Permission denied."
+      "[console:error] Failed to load resource: the server responded with a status of 401 ()",
+      "[console:warning] [WooCommerce] An inline or unknown script accessed wc.wcBlocksData without proper dependency declaration. This script should declare \"wc-blocks-data-store\" as a dependency.",
+      "[console:error] Failed to load resource: the server responded with a status of 401 ()",
+      "[console:error] Failed to load resource: the server responded with a status of 401 ()",
+      "[console:warning] Third-party cookie will be blocked. Learn more in the Issues tab.",
+      "[console:warning] Third-party cookie will be blocked. Learn more in the Issues tab.",
+      "[console:warning] Third-party cookie will be blocked. Learn more in the Issues tab.",
+      "[console:warning] Third-party cookie will be blocked. Learn more in the Issues tab.",
+      "[console:error] Failed to load resource: the server responded with a status of 401 ()",
+      "[console:error] Failed to load resource: the server responded with a status of 401 ()"
     ],
     "page_errors": [
-      "requestStorageAccess not allowed",
-      "reCAPTCHA Timeout"
+      "requestStorageAccess not allowed"
     ],
-    "failed_requests": []
+    "failed_requests": [
+      "GET https://otdev1602.wpengine.com/wp-admin/admin-ajax.php?action=ot_dash_ajax_handle&content=recommended_jobs&user_id=20049 \u2014 net::ERR_ABORTED",
+      "GET https://api.stripe.com/v1/elements/sessions?deferred_intent[mode]=payment&deferred_intent[amount]=7146&deferred_intent[currency]=gbp&deferred_intent[payment_method_types][0]=card&currency=gbp&key=pk_live_5182e7KDIH3kBTRJvZKJM7Op2QcdQmZ7xH1TfJTma9RXC3y4RkNwVp16v9LD72PeBcDvYiqYPTWKLGBhudLQTlbaC00RYw2KNCt&_stripe_version=2026-03-25.dahlia&elements_init_source=stripe.elements&referrer_host=otdev1602.wpengine.com&stripe_js_id=00b1b3c7-7a79-441c-bd9a-ede645451c31&locale=en-GB&browser_timezone=UTC&type=deferred_intent \u2014 net::ERR_ABORTED",
+      "GET https://api.stripe.com/v1/elements/sessions?deferred_intent[mode]=payment&deferred_intent[amount]=7146&deferred_intent[currency]=gbp&deferred_intent[payment_method_types][0]=card&deferred_intent[payment_method_types][1]=link&currency=gbp&key=pk_live_5182e7KDIH3kBTRJvZKJM7Op2QcdQmZ7xH1TfJTma9RXC3y4RkNwVp16v9LD72PeBcDvYiqYPTWKLGBhudLQTlbaC00RYw2KNCt&_stripe_version=2026-03-25.dahlia&elements_init_source=stripe.elements&referrer_host=otdev1602.wpengine.com&stripe_js_id=00b1b3c7-7a79-441c-bd9a-ede645451c31&locale=en-GB&browser_timezone=UTC&type=deferred_intent \u2014 net::ERR_ABORTED",
+      "GET https://otdev1602.wpengine.com/wp-content/plugins/woocommerce/assets/client/blocks/blocks-checkout-events.js?ver=1cd9ffa6e3cff96ad1b2 \u2014 net::ERR_FAILED",
+      "GET https://otdev1602.wpengine.com/wp-content/plugins/woocommerce/assets/client/blocks/wc-types.js?ver=c4b7280ca0810ce973be \u2014 net::ERR_FAILED",
+      "GET https://otdev1602.wpengine.com/wp-content/plugins/woocommerce/assets/client/blocks/blocks-components.js?ver=024deac35759b91da09e \u2014 net::ERR_FAILED",
+      "GET https://07bb422eb52a.w.hcaptcha.com/logo.png \u2014 net::ERR_ABORTED",
+      "GET https://2eaf16bdcd10.w.hcaptcha.com/logo.png \u2014 net::ERR_ABORTED"
+    ]
   },
   "test_dbs_fee_form_gated_to_tutor_or_admin": {
-    "message": "Failed \u2014 Timeout 30000ms exceeded. [2 JS error(s), e.g. 'requestStorageAccess not allowed'; 1 console error/warning(s)]",
-    "screenshot": "screenshots/test_dbs_fee_form_gated_to_tutor_or_admin.png",
-    "step": null,
-    "console_errors": [
-      "[console:error] requestStorageAccess: Permission denied."
-    ],
-    "page_errors": [
-      "requestStorageAccess not allowed",
-      "reCAPTCHA Timeout"
-    ],
-    "failed_requests": []
+    "message": "Logged-out visitor redirected to /login (not a 404); logged-in tutor sees native add-to-cart form"
   },
   "test_group_course_listing": {
     "message": "Group course listing loaded with course cards visible"
@@ -202,17 +201,17 @@
     "message": "Testimonial 200216 submitted successfully, reset back to Incomplete"
   },
   "test_stale_scheduled_event_is_safe_noop": {
-    "message": "Stale ot_jobs_schedule_stage_1_more_info_1 event on Stage-3 job 202770 correctly no-op'd",
-    "job_id": "202770"
+    "message": "Stale ot_jobs_schedule_stage_1_more_info_1 event on Stage-3 job 202893 correctly no-op'd",
+    "job_id": "202893"
   },
   "test_ams_editor_reminder_email_sends": {
-    "message": "AMS editor reminder (SGTM001) correctly logged for post 202771",
-    "post_id": "202771"
+    "message": "AMS editor reminder (SGTM001) correctly logged for post 202894",
+    "post_id": "202894"
   },
   "test_duplicate_job_event_notifies_client": {
-    "message": "Duplicate-job event correctly logged client email (SGCU009) for job 202773, original job 202772",
-    "duplicate_job_id": "202773",
-    "original_job_id": "202772"
+    "message": "Duplicate-job event correctly logged client email (SGCU009) for job 202896, original job 202895",
+    "duplicate_job_id": "202896",
+    "original_job_id": "202895"
   },
   "test_ga4_session_storage_set_on_load": {
     "message": "initial_url='https://otdev1602.wpengine.com/'  traffic_source_r='$direct'"
@@ -221,75 +220,97 @@
     "message": "ga_client_id='123456789.1700000000' set in sessionStorage from _ga cookie"
   },
   "test_course_checkout_page_loads_for_guest": {
-    "message": "Failed \u2014 Locator expected to be visible \u2014 waiting for locator(\"#ot-course-checkout-form\")",
-    "screenshot": "screenshots/test_course_checkout_page_loads_for_guest.png",
-    "step": null,
-    "console_errors": [],
-    "page_errors": [],
-    "failed_requests": []
+    "message": "Checkout page loaded for guest, course 202787"
   },
   "test_course_payment_intent_ajax_returns_client_secret": {
-    "message": "Failed \u2014 Locator.fill: Timeout 30000ms exceeded. \u2014 waiting for locator(\"#client_name\")",
-    "screenshot": "screenshots/test_course_payment_intent_ajax_returns_client_secret.png",
-    "step": null,
-    "console_errors": [],
-    "page_errors": [],
-    "failed_requests": []
+    "message": "ot_course_create_payment_intent returned a valid client_secret"
   },
   "test_successful_course_payment_redirects_with_enrolment_confirmed": {
-    "message": "Failed \u2014 Locator.fill: Timeout 30000ms exceeded. \u2014 waiting for locator(\"#client_name\")",
+    "message": "Failed \u2014 Timeout 30000ms exceeded. [8 console error/warning(s)]",
     "screenshot": "screenshots/test_successful_course_payment_redirects_with_enrolment_confirmed.png",
     "step": null,
-    "console_errors": [],
+    "console_errors": [
+      "[console:error] Failed to load resource: the server responded with a status of 401 ()",
+      "[console:error] Failed to load resource: the server responded with a status of 401 ()",
+      "[console:warning] Third-party cookie will be blocked. Learn more in the Issues tab.",
+      "[console:warning] Third-party cookie will be blocked. Learn more in the Issues tab.",
+      "[console:warning] Third-party cookie will be blocked. Learn more in the Issues tab.",
+      "[console:warning] Third-party cookie will be blocked. Learn more in the Issues tab.",
+      "[console:warning] Third-party cookie will be blocked. Learn more in the Issues tab.",
+      "[console:error] Failed to load resource: the server responded with a status of 401 ()"
+    ],
     "page_errors": [],
     "failed_requests": []
   },
   "test_client_dashboard_shows_course_bookings": {
-    "message": "Failed \u2014 owl_create_test_course_enrolment failed: {'success': False, 'error': 'course_id required and must be a group_course'}",
-    "screenshot": "screenshots/test_client_dashboard_shows_course_bookings.png",
-    "step": null,
-    "console_errors": [],
-    "page_errors": [],
-    "failed_requests": []
+    "message": "Enrolment 202897: 'My course bookings' section rendered for testbot.coursebooking.6a9ebec5a0f87@owltutors.co.uk"
   },
   "test_course_materials_visible_to_logged_in_tutor": {
-    "message": "Failed \u2014 Timeout 90000ms exceeded. [2 JS error(s), e.g. 'requestStorageAccess not allowed'; 1 console error/warning(s)]",
-    "screenshot": "screenshots/test_course_materials_visible_to_logged_in_tutor.png",
+    "message": "Course materials section visible for course 202787's own tutor"
+  },
+  "test_homepage_loads": {
+    "message": "Homepage loaded with hero section visible"
+  },
+  "test_stage3_job_renders_applicant_cards": {
+    "message": "Stage 3 job 202898 rendered applicant cards and sort dropdown",
+    "job_id": "202898"
+  },
+  "test_connect_with_tutor_triggers_modal": {
+    "message": "ot_job_identify_modal fired for job 202898 / tutor 20049",
+    "job_id": "202898"
+  },
+  "test_accept_terms_modal_renders": {
+    "message": "Stage 3 modal rendered with content for job 202898",
+    "job_id": "202898"
+  },
+  "test_logged_out_stage3_sees_login_modal": {
+    "message": "Logged-out user logged in via inline form and reached Stage 3 job 202898",
+    "job_id": "202898"
+  },
+  "test_stripe_return_auto_triggers_modal": {
+    "message": "Stripe-return params auto-opened modal on job 202898",
+    "job_id": "202898"
+  },
+  "test_accept_terms_advances_to_stage4": {
+    "message": "Job 202898 advanced to Stage 4 after accepting terms",
+    "job_id": "202898"
+  },
+  "test_magic_link_auto_login": {
+    "message": "Magic link authenticated for job 202900",
+    "job_id": "202900"
+  },
+  "test_client_stage4_job_shows_connected_tutor": {
+    "message": "Stage 4 job 202898 shows 'Your chosen tutor' section",
+    "job_id": "202898"
+  },
+  "test_live_job_shows_timesheet_feedback": {
+    "message": "Live job 202901: Timesheet feedback section rendered real submitted report for timesheet 202902",
+    "job_id": "202901"
+  },
+  "test_first_time_client_prompted_to_set_password": {
+    "message": "Job 202903: first-time client shown Set PW modal, not login",
+    "job_id": "202903"
+  },
+  "test_tutor_dashboard_active_jobs_renders_cards": {
+    "message": "Failed \u2014 Expected a .tutor_live_job card in the submit_a_timesheet AJAX response, got: '<p>You currently have no live jobs with us. Please contact us if this seems wrong.</p>' [1 JS error(s), e.g. 'requestStorageAccess not allowed'; 1 failed request(s), e.g. 'GET https://otdev1602.wpengine.com/wp-admin/admin-ajax.php?action=ot_dash_ajax_handle&content=recom\u2026'; 1 console error/warning(s)]",
+    "screenshot": "screenshots/test_tutor_dashboard_active_jobs_renders_cards.png",
     "step": null,
     "console_errors": [
       "[console:error] requestStorageAccess: Permission denied."
     ],
     "page_errors": [
-      "requestStorageAccess not allowed",
-      "reCAPTCHA Timeout"
+      "requestStorageAccess not allowed"
     ],
-    "failed_requests": []
-  },
-  "test_homepage_loads": {
-    "message": "Homepage loaded with hero section visible"
-  },
-  "test_magic_link_auto_login": {
-    "message": "Magic link authenticated for job 202776",
-    "job_id": "202776"
-  },
-  "test_live_job_shows_timesheet_feedback": {
-    "message": "Failed \u2014 Timeout 30000ms exceeded.",
-    "screenshot": "screenshots/test_live_job_shows_timesheet_feedback.png",
-    "step": null,
-    "console_errors": [],
-    "page_errors": [],
-    "failed_requests": []
-  },
-  "test_first_time_client_prompted_to_set_password": {
-    "message": "Job 202778: first-time client shown Set PW modal, not login",
-    "job_id": "202778"
+    "failed_requests": [
+      "GET https://otdev1602.wpengine.com/wp-admin/admin-ajax.php?action=ot_dash_ajax_handle&content=recommended_jobs&user_id=20049 \u2014 net::ERR_ABORTED"
+    ]
   },
   "test_meet_now_form_auto_selects_type": {
     "message": "Meet-now form state correct: type hidden, home delivery disabled, jobs board hidden"
   },
   "test_meet_now_submission": {
-    "message": "Meet-now form submitted, redirected to job 202779; requested_job_members verified against DB",
-    "job_id": "202779",
+    "message": "Meet-now form submitted, redirected to job 202904; requested_job_members verified against DB",
+    "job_id": "202904",
     "job_create_type": "Meet now"
   },
   "test_validate_number_classifies_uk_mobile_landline_and_invalid": {
@@ -314,16 +335,30 @@
     "message": "Load More clicked \u2014 6 initial papers expanded to 107, scrolled to newly loaded content"
   },
   "test_general_basket_checkout_flow": {
-    "message": "Failed \u2014 Locator.fill: Timeout 30000ms exceeded. \u2014 waiting for frame_locator(\"iframe[title='Secure payment input frame']\").locator(\"[name=\\\"number\\\"]\") [2 failed request(s), e.g. 'GET https://b.stripecdn.com/stripethirdparty-srv/assets/v33.10/HCaptchaInvisible.html?id=4a9e0465-3\u2026'; 1 console error/warning(s)]",
+    "message": "Failed \u2014 Timeout 30000ms exceeded. [7 failed request(s), e.g. 'GET https://otdev1602.wpengine.com/wp-includes/js/dist/compose.min.js?ver=0e8bde2a499ea6073b42 \u2014 ne\u2026'; 43 console error/warning(s)]",
     "screenshot": "screenshots/test_general_basket_checkout_flow.png",
     "step": null,
     "console_errors": [
-      "[console:warning] [WooCommerce] An inline or unknown script accessed wc.wcBlocksData without proper dependency declaration. This script should declare \"wc-blocks-data-store\" as a dependency."
+      "[console:warning] Third-party cookie will be blocked. Learn more in the Issues tab.",
+      "[console:warning] Third-party cookie will be blocked. Learn more in the Issues tab.",
+      "[console:warning] Third-party cookie will be blocked. Learn more in the Issues tab.",
+      "[console:warning] Third-party cookie will be blocked. Learn more in the Issues tab.",
+      "[console:warning] Third-party cookie will be blocked. Learn more in the Issues tab.",
+      "[console:warning] [WooCommerce] An inline or unknown script accessed wc.wcBlocksData without proper dependency declaration. This script should declare \"wc-blocks-data-store\" as a dependency.",
+      "[console:error] Failed to load resource: the server responded with a status of 401 ()",
+      "[console:error] Failed to load resource: the server responded with a status of 401 ()",
+      "[console:error] Failed to load resource: the server responded with a status of 401 ()",
+      "[console:error] Failed to load resource: the server responded with a status of 401 ()"
     ],
     "page_errors": [],
     "failed_requests": [
-      "GET https://b.stripecdn.com/stripethirdparty-srv/assets/v33.10/HCaptchaInvisible.html?id=4a9e0465-381e-4000-b5b3-c2f0a7465449&origin=https%3A%2F%2Fjs.stripe.com \u2014 net::ERR_ABORTED",
-      "GET https://js.stripe.com/dahlia/stripe.js \u2014 net::ERR_BLOCKED_BY_ORB"
+      "GET https://otdev1602.wpengine.com/wp-includes/js/dist/compose.min.js?ver=0e8bde2a499ea6073b42 \u2014 net::ERR_FAILED",
+      "GET https://otdev1602.wpengine.com/wp-includes/js/dist/deprecated.min.js?ver=fe587bac92b7d0ef760e \u2014 net::ERR_FAILED",
+      "GET https://otdev1602.wpengine.com/wp-includes/js/dist/dom.min.js?ver=c95f94cbbc1ac3fde84f \u2014 net::ERR_FAILED",
+      "GET https://otdev1602.wpengine.com/wp-includes/js/dist/wordcount.min.js?ver=f0b1f0e977b2ff6e0132 \u2014 net::ERR_FAILED",
+      "GET https://otdev1602.wpengine.com/wp-content/themes/owltheme/assets/fontawesome/webfonts/fa-solid-900.woff2 \u2014 net::ERR_FAILED",
+      "GET https://f062964f229e.w.hcaptcha.com/logo.png \u2014 net::ERR_ABORTED",
+      "GET https://829dceca01b3.w.hcaptcha.com/logo.png \u2014 net::ERR_ABORTED"
     ]
   },
   "test_tutor_registration_page_loads": {
@@ -333,20 +368,22 @@
     "message": "Registration submitted and redirected to https://otdev1602.wpengine.com/tutor-section/application/"
   },
   "test_preapplicant_application_page_loads": {
-    "message": "Failed \u2014 Timeout 30000ms exceeded. [2 JS error(s), e.g. 'requestStorageAccess not allowed'; 1 console error/warning(s)]",
+    "message": "Failed \u2014 Timeout 30000ms exceeded. [3 JS error(s), e.g. 'requestStorageAccess not allowed'; 2 console error/warning(s)]",
     "screenshot": "screenshots/test_preapplicant_application_page_loads.png",
     "step": null,
     "console_errors": [
+      "[console:error] requestStorageAccess: Permission denied.",
       "[console:error] requestStorageAccess: Permission denied."
     ],
     "page_errors": [
+      "requestStorageAccess not allowed",
       "requestStorageAccess not allowed",
       "reCAPTCHA Timeout"
     ],
     "failed_requests": []
   },
   "test_tutor_full_application_flow": {
-    "message": "Failed \u2014 Locator expected to be visible \u2014 waiting for locator(\"form#isappreadyForm\") [13 JS error(s), e.g. 'requestStorageAccess not allowed'; 3 failed request(s), e.g. 'GET https://www.gstatic.com/recaptcha/releases/8x-4t2pegToiW8KmThtO4AQt/recaptcha__en.js \u2014 net::ERR\u2026'; 11 console error/warning(s)]",
+    "message": "Failed \u2014 Locator expected to be visible \u2014 waiting for locator(\"form#isappreadyForm\") [14 JS error(s), e.g. 'requestStorageAccess not allowed'; 1 failed request(s), e.g. 'POST https://otdev1602.wpengine.com/wp-admin/admin-ajax.php?_=1788788732974 \u2014 net::ERR_ABORTED'; 12 console error/warning(s)]",
     "screenshot": "screenshots/test_tutor_full_application_flow.png",
     "step": null,
     "console_errors": [
@@ -362,7 +399,6 @@
       "[console:error] requestStorageAccess: Permission denied."
     ],
     "page_errors": [
-      "requestStorageAccess not allowed",
       "reCAPTCHA Timeout",
       "requestStorageAccess not allowed",
       "requestStorageAccess not allowed",
@@ -371,12 +407,11 @@
       "requestStorageAccess not allowed",
       "requestStorageAccess not allowed",
       "reCAPTCHA Timeout",
+      "requestStorageAccess not allowed",
       "requestStorageAccess not allowed"
     ],
     "failed_requests": [
-      "GET https://www.gstatic.com/recaptcha/releases/8x-4t2pegToiW8KmThtO4AQt/recaptcha__en.js \u2014 net::ERR_ABORTED",
-      "GET https://www.gstatic.com/recaptcha/releases/8x-4t2pegToiW8KmThtO4AQt/styles__ltr.css \u2014 net::ERR_ABORTED",
-      "POST https://otdev1602.wpengine.com/wp-admin/admin-ajax.php?_=1788777387088 \u2014 net::ERR_ABORTED"
+      "POST https://otdev1602.wpengine.com/wp-admin/admin-ajax.php?_=1788788732974 \u2014 net::ERR_ABORTED"
     ]
   },
   "test_logged_out_application_page_has_fields": {
@@ -397,13 +432,15 @@
     "failed_requests": []
   },
   "test_preapplicant_section_nav_forward_back": {
-    "message": "Failed \u2014 Timeout 30000ms exceeded. [2 JS error(s), e.g. 'requestStorageAccess not allowed'; 1 console error/warning(s)]",
+    "message": "Failed \u2014 Timeout 30000ms exceeded. [3 JS error(s), e.g. 'requestStorageAccess not allowed'; 2 console error/warning(s)]",
     "screenshot": "screenshots/test_preapplicant_section_nav_forward_back.png",
     "step": null,
     "console_errors": [
+      "[console:error] requestStorageAccess: Permission denied.",
       "[console:error] requestStorageAccess: Permission denied."
     ],
     "page_errors": [
+      "requestStorageAccess not allowed",
       "requestStorageAccess not allowed",
       "reCAPTCHA Timeout"
     ],
@@ -413,26 +450,30 @@
     "message": "Logged-in client sees 'already signed in' on application page; registration form hidden"
   },
   "test_preapplicant_availability_tab_has_grid": {
-    "message": "Failed \u2014 Timeout 30000ms exceeded. [2 JS error(s), e.g. 'requestStorageAccess not allowed'; 1 console error/warning(s)]",
+    "message": "Failed \u2014 Timeout 30000ms exceeded. [3 JS error(s), e.g. 'requestStorageAccess not allowed'; 2 console error/warning(s)]",
     "screenshot": "screenshots/test_preapplicant_availability_tab_has_grid.png",
     "step": null,
     "console_errors": [
+      "[console:error] requestStorageAccess: Permission denied.",
       "[console:error] requestStorageAccess: Permission denied."
     ],
     "page_errors": [
+      "requestStorageAccess not allowed",
       "requestStorageAccess not allowed",
       "reCAPTCHA Timeout"
     ],
     "failed_requests": []
   },
   "test_preapplicant_availability_save_and_persist": {
-    "message": "Failed \u2014 Timeout 30000ms exceeded. [2 JS error(s), e.g. 'requestStorageAccess not allowed'; 1 console error/warning(s)]",
+    "message": "Failed \u2014 Timeout 30000ms exceeded. [3 JS error(s), e.g. 'requestStorageAccess not allowed'; 2 console error/warning(s)]",
     "screenshot": "screenshots/test_preapplicant_availability_save_and_persist.png",
     "step": null,
     "console_errors": [
+      "[console:error] requestStorageAccess: Permission denied.",
       "[console:error] requestStorageAccess: Permission denied."
     ],
     "page_errors": [
+      "requestStorageAccess not allowed",
       "requestStorageAccess not allowed",
       "reCAPTCHA Timeout"
     ],
@@ -460,30 +501,10 @@
     "message": "Remove tutor updated URL correctly; removing last tutor returned to plain /contact-us/"
   },
   "test_rest_schools_endpoint_filters_by_subject": {
-    "message": "Failed \u2014 Timeout 30000ms exceeded. [2 JS error(s), e.g. 'requestStorageAccess not allowed'; 1 console error/warning(s)]",
-    "screenshot": "screenshots/test_rest_schools_endpoint_filters_by_subject.png",
-    "step": null,
-    "console_errors": [
-      "[console:error] requestStorageAccess: Permission denied."
-    ],
-    "page_errors": [
-      "requestStorageAccess not allowed",
-      "reCAPTCHA Timeout"
-    ],
-    "failed_requests": []
+    "message": "request_type=schools&subject=11 Plus returned 453 school(s)"
   },
   "test_rest_papers_endpoint_filters_by_subject": {
-    "message": "Failed \u2014 Timeout 30000ms exceeded. [2 JS error(s), e.g. 'requestStorageAccess not allowed'; 1 console error/warning(s)]",
-    "screenshot": "screenshots/test_rest_papers_endpoint_filters_by_subject.png",
-    "step": null,
-    "console_errors": [
-      "[console:error] requestStorageAccess: Permission denied."
-    ],
-    "page_errors": [
-      "requestStorageAccess not allowed",
-      "reCAPTCHA Timeout"
-    ],
-    "failed_requests": []
+    "message": "request_type=papers&subject=maths returned 1 page(s)"
   },
   "test_rest_endpoint_rejects_logged_out_request": {
     "message": "Logged-out request correctly rejected with status 401"
@@ -558,7 +579,7 @@
     "message": "total correctly reflects exclusion/inclusion: 10 -> 11"
   },
   "test_admin_day_time_search_applies_same_outcome_filter": {
-    "message": "Failed \u2014 Tutor 37464 (outcome 1b, capacity>0) unexpectedly absent from admin search results [13 console error/warning(s)]",
+    "message": "Failed \u2014 Tutor 37464 (outcome 1b, capacity>0) unexpectedly absent from admin search results [14 console error/warning(s)]",
     "screenshot": "screenshots/test_admin_day_time_search_applies_same_outcome_filter.png",
     "step": null,
     "console_errors": [
@@ -586,227 +607,100 @@
     "message": "Tutor listing page has a Product node in its JSON-LD @graph"
   },
   "test_add_card_checkout_session_returns_stripe_session": {
-    "message": "Failed \u2014 Timeout 90000ms exceeded. [2 JS error(s), e.g. 'requestStorageAccess not allowed'; 1 console error/warning(s)]",
-    "screenshot": "screenshots/test_add_card_checkout_session_returns_stripe_session.png",
-    "step": null,
-    "console_errors": [
-      "[console:error] requestStorageAccess: Permission denied."
-    ],
-    "page_errors": [
-      "requestStorageAccess not allowed",
-      "reCAPTCHA Timeout"
-    ],
-    "failed_requests": []
+    "message": "ot_create_checkout_session returned session cs_test_c1be1cWHbl8GdhZg4rbPA9HGjuDo6tlNFbwYlIfIzPkOst6rSlsC9tcMYA"
   },
   "test_post_checkout_return_saves_card_and_sets_client_active": {
-    "message": "Failed \u2014 Timeout 90000ms exceeded. [2 JS error(s), e.g. 'requestStorageAccess not allowed'; 1 console error/warning(s)]",
+    "message": "Failed \u2014 Locator.fill: Timeout 30000ms exceeded. \u2014 waiting for locator(\"#cardNumber\") [1 JS error(s), e.g. 'requestStorageAccess not allowed'; 8 console error/warning(s)]",
     "screenshot": "screenshots/test_post_checkout_return_saves_card_and_sets_client_active.png",
     "step": null,
     "console_errors": [
-      "[console:error] requestStorageAccess: Permission denied."
+      "[console:error] requestStorageAccess: Permission denied.",
+      "[console:warning] Third-party cookie will be blocked. Learn more in the Issues tab.",
+      "[console:warning] <link rel=preload> uses an unsupported `as` value",
+      "[console:warning] <link rel=preload> uses an unsupported `as` value",
+      "[console:error] Failed to load resource: the server responded with a status of 401 ()",
+      "[console:warning] Third-party cookie will be blocked. Learn more in the Issues tab.",
+      "[console:warning] Third-party cookie will be blocked. Learn more in the Issues tab.",
+      "[console:warning] Third-party cookie will be blocked. Learn more in the Issues tab."
     ],
     "page_errors": [
-      "requestStorageAccess not allowed",
-      "reCAPTCHA Timeout"
+      "requestStorageAccess not allowed"
     ],
     "failed_requests": []
   },
   "test_prepaid_card_rejected": {
-    "message": "Failed \u2014 Timeout 90000ms exceeded. [2 JS error(s), e.g. 'requestStorageAccess not allowed'; 1 console error/warning(s)]",
+    "message": "Failed \u2014 Locator.fill: Timeout 30000ms exceeded. \u2014 waiting for locator(\"#cardNumber\") [1 JS error(s), e.g. 'requestStorageAccess not allowed'; 8 console error/warning(s)]",
     "screenshot": "screenshots/test_prepaid_card_rejected.png",
     "step": null,
     "console_errors": [
-      "[console:error] requestStorageAccess: Permission denied."
+      "[console:error] requestStorageAccess: Permission denied.",
+      "[console:warning] Third-party cookie will be blocked. Learn more in the Issues tab.",
+      "[console:warning] <link rel=preload> uses an unsupported `as` value",
+      "[console:warning] <link rel=preload> uses an unsupported `as` value",
+      "[console:error] Failed to load resource: the server responded with a status of 401 ()",
+      "[console:warning] Third-party cookie will be blocked. Learn more in the Issues tab.",
+      "[console:warning] Third-party cookie will be blocked. Learn more in the Issues tab.",
+      "[console:warning] Third-party cookie will be blocked. Learn more in the Issues tab."
     ],
     "page_errors": [
-      "requestStorageAccess not allowed",
-      "reCAPTCHA Timeout"
+      "requestStorageAccess not allowed"
     ],
     "failed_requests": []
   },
   "test_tutor_dashboard_loads": {
-    "message": "Failed \u2014 Timeout 30000ms exceeded. [2 JS error(s), e.g. 'requestStorageAccess not allowed'; 1 console error/warning(s)]",
-    "screenshot": "screenshots/test_tutor_dashboard_loads.png",
-    "step": null,
-    "console_errors": [
-      "[console:error] requestStorageAccess: Permission denied."
-    ],
-    "page_errors": [
-      "requestStorageAccess not allowed",
-      "reCAPTCHA Timeout"
-    ],
-    "failed_requests": []
+    "message": "Tutor dashboard loaded with correct header and container"
   },
   "test_tutor_dashboard_jobs_board": {
-    "message": "Failed \u2014 Timeout 30000ms exceeded. [2 JS error(s), e.g. 'requestStorageAccess not allowed'; 1 console error/warning(s)]",
-    "screenshot": "screenshots/test_tutor_dashboard_jobs_board.png",
-    "step": null,
-    "console_errors": [
-      "[console:error] requestStorageAccess: Permission denied."
-    ],
-    "page_errors": [
-      "requestStorageAccess not allowed",
-      "reCAPTCHA Timeout"
-    ],
-    "failed_requests": []
+    "message": "Tutor jobs board tab pane visible and active"
   },
   "test_tutor_dashboard_timesheet_entry": {
-    "message": "Failed \u2014 Timeout 30000ms exceeded. [2 JS error(s), e.g. 'requestStorageAccess not allowed'; 1 console error/warning(s)]",
-    "screenshot": "screenshots/test_tutor_dashboard_timesheet_entry.png",
-    "step": null,
-    "console_errors": [
-      "[console:error] requestStorageAccess: Permission denied."
-    ],
-    "page_errors": [
-      "requestStorageAccess not allowed",
-      "reCAPTCHA Timeout"
-    ],
-    "failed_requests": []
+    "message": "Tutor timesheet entry pane present in DOM"
   },
   "test_tutor_jobs_board_filter_returns_results": {
-    "message": "Failed \u2014 Timeout 30000ms exceeded. [2 JS error(s), e.g. 'requestStorageAccess not allowed'; 1 console error/warning(s)]",
-    "screenshot": "screenshots/test_tutor_jobs_board_filter_returns_results.png",
-    "step": null,
-    "console_errors": [
-      "[console:error] requestStorageAccess: Permission denied."
-    ],
-    "page_errors": [
-      "requestStorageAccess not allowed",
-      "reCAPTCHA Timeout"
-    ],
-    "failed_requests": []
+    "message": "Jobs board filter (Maths, Online) submitted; results rendered"
   },
   "test_tutor_stripe_connect_section_renders": {
-    "message": "Failed \u2014 Timeout 30000ms exceeded. [2 JS error(s), e.g. 'requestStorageAccess not allowed'; 1 console error/warning(s)]",
-    "screenshot": "screenshots/test_tutor_stripe_connect_section_renders.png",
-    "step": null,
-    "console_errors": [
-      "[console:error] requestStorageAccess: Permission denied."
-    ],
-    "page_errors": [
-      "requestStorageAccess not allowed",
-      "reCAPTCHA Timeout"
-    ],
-    "failed_requests": []
+    "message": "Stripe Connect section rendered content after AJAX load"
   },
   "test_tutor_availability_grid_renders": {
-    "message": "Failed \u2014 Timeout 30000ms exceeded. [2 JS error(s), e.g. 'requestStorageAccess not allowed'; 1 console error/warning(s)]",
-    "screenshot": "screenshots/test_tutor_availability_grid_renders.png",
-    "step": null,
-    "console_errors": [
-      "[console:error] requestStorageAccess: Permission denied."
-    ],
-    "page_errors": [
-      "requestStorageAccess not allowed",
-      "reCAPTCHA Timeout"
-    ],
-    "failed_requests": []
+    "message": "Availability slot grid rendered at /dashboard/profile/#my_availability"
   },
   "test_tutor_availability_grid_saves": {
-    "message": "Failed \u2014 Timeout 30000ms exceeded. [2 JS error(s), e.g. 'requestStorageAccess not allowed'; 1 console error/warning(s)]",
-    "screenshot": "screenshots/test_tutor_availability_grid_saves.png",
-    "step": null,
-    "console_errors": [
-      "[console:error] requestStorageAccess: Permission denied."
-    ],
-    "page_errors": [
-      "requestStorageAccess not allowed",
-      "reCAPTCHA Timeout"
-    ],
-    "failed_requests": []
+    "message": "Availability slot [day=0, slot=0] toggled and state persisted after reload"
   },
   "test_tutor_dashboard_invoices_renders": {
-    "message": "Failed \u2014 Timeout 30000ms exceeded. [2 JS error(s), e.g. 'requestStorageAccess not allowed'; 1 console error/warning(s)]",
-    "screenshot": "screenshots/test_tutor_dashboard_invoices_renders.png",
-    "step": null,
-    "console_errors": [
-      "[console:error] requestStorageAccess: Permission denied."
-    ],
-    "page_errors": [
-      "requestStorageAccess not allowed",
-      "reCAPTCHA Timeout"
-    ],
-    "failed_requests": []
+    "message": "Invoices section rendered at /dashboard/tutoring-section/#invoices"
   },
   "test_timesheet_wizard_renders_stripe_connect_check": {
-    "message": "Failed \u2014 Timeout 30000ms exceeded. [2 JS error(s), e.g. 'requestStorageAccess not allowed'; 1 console error/warning(s)]",
-    "screenshot": "screenshots/test_timesheet_wizard_renders_stripe_connect_check.png",
-    "step": null,
-    "console_errors": [
-      "[console:error] requestStorageAccess: Permission denied."
-    ],
-    "page_errors": [
-      "requestStorageAccess not allowed",
-      "reCAPTCHA Timeout"
-    ],
-    "failed_requests": []
+    "message": "EA job 202910 correctly shows the Stripe Connect form first",
+    "job_id": "202910"
   },
   "test_eb_job_timesheet_submission_creates_timesheet_and_redirects": {
-    "message": "Failed \u2014 Timeout 30000ms exceeded. [2 JS error(s), e.g. 'requestStorageAccess not allowed'; 1 console error/warning(s)]",
-    "screenshot": "screenshots/test_eb_job_timesheet_submission_creates_timesheet_and_redirects.png",
-    "step": null,
-    "console_errors": [
-      "[console:error] requestStorageAccess: Permission denied."
-    ],
-    "page_errors": [
-      "requestStorageAccess not allowed",
-      "reCAPTCHA Timeout"
-    ],
-    "failed_requests": []
+    "message": "EB job 202911 timesheet submitted, redirected to https://otdev1602.wpengine.com/dashboard/tutoring-section/#submit_a_timesheet",
+    "job_id": "202911"
   },
   "test_duplicate_timesheet_check_shows_warning": {
-    "message": "Failed \u2014 Timeout 30000ms exceeded. [2 JS error(s), e.g. 'requestStorageAccess not allowed'; 1 failed request(s), e.g. 'POST https://csp.withgoogle.com/csp/frame-ancestors/38fac9d5b82543fc4729580d18ff2d3d \u2014 net::ERR_BLO\u2026'; 2 console error/warning(s)]",
-    "screenshot": "screenshots/test_duplicate_timesheet_check_shows_warning.png",
-    "step": null,
-    "console_errors": [
-      "[console:error] [Report Only] Refused to frame 'https://www.google.com/' because an ancestor violates the following Content Security Policy directive: \"frame-ancestors 'self'\".\n",
-      "[console:error] requestStorageAccess: Permission denied."
-    ],
-    "page_errors": [
-      "requestStorageAccess not allowed",
-      "reCAPTCHA Timeout"
-    ],
-    "failed_requests": [
-      "POST https://csp.withgoogle.com/csp/frame-ancestors/38fac9d5b82543fc4729580d18ff2d3d \u2014 net::ERR_BLOCKED_BY_ORB"
-    ]
+    "message": "Job 202914: duplicate timesheet warning shown on second submission attempt",
+    "job_id": "202914"
   },
   "test_bill_timesheet_in_stripe_creates_real_invoice": {
-    "message": "Failed \u2014 Timeout 30000ms exceeded. [2 JS error(s), e.g. 'requestStorageAccess not allowed'; 1 console error/warning(s)]",
-    "screenshot": "screenshots/test_bill_timesheet_in_stripe_creates_real_invoice.png",
-    "step": null,
-    "console_errors": [
-      "[console:error] requestStorageAccess: Permission denied."
-    ],
-    "page_errors": [
-      "requestStorageAccess not allowed",
-      "reCAPTCHA Timeout"
-    ],
-    "failed_requests": []
+    "message": "Timesheet 202918: Stripe invoice in_1UD311DIH3kBTRJviCCFMip9 created and sent",
+    "job_id": "202917",
+    "timesheet_id": "202918"
   },
   "test_whatsapp_template_preview_rejects_path_traversal": {
-    "message": "Failed \u2014 Timeout 30000ms exceeded. [2 JS error(s), e.g. 'requestStorageAccess not allowed'; 1 console error/warning(s)]",
+    "message": "Failed \u2014 Expected 200 (graceful no-match), got 403 for '../../../../wp-config' [1 JS error(s), e.g. 'requestStorageAccess not allowed'; 1 console error/warning(s)]",
     "screenshot": "screenshots/test_whatsapp_template_preview_rejects_path_traversal.png",
     "step": null,
     "console_errors": [
       "[console:error] requestStorageAccess: Permission denied."
     ],
     "page_errors": [
-      "requestStorageAccess not allowed",
-      "reCAPTCHA Timeout"
+      "requestStorageAccess not allowed"
     ],
     "failed_requests": []
   },
   "test_whatsapp_template_preview_resolves_real_template": {
-    "message": "Failed \u2014 Timeout 30000ms exceeded. [2 JS error(s), e.g. 'requestStorageAccess not allowed'; 1 console error/warning(s)]",
-    "screenshot": "screenshots/test_whatsapp_template_preview_resolves_real_template.png",
-    "step": null,
-    "console_errors": [
-      "[console:error] requestStorageAccess: Permission denied."
-    ],
-    "page_errors": [
-      "requestStorageAccess not allowed",
-      "reCAPTCHA Timeout"
-    ],
-    "failed_requests": []
+    "message": "client_job_stage3 template resolved to real message content"
   }
 }
