@@ -4,6 +4,17 @@ on:
   schedule:
     - cron: '0 7 * * *'  # 7am UTC daily
   workflow_dispatch:       # allow manual trigger from GitHub UI
+    inputs:
+      pytest_markers:
+        description: >-
+          Optional pytest -m expression (e.g. "auth or jobs or tutors") to run
+          just a subset of tests -- see pytest.ini for the full marker list.
+          Leave blank for the normal full-suite run. Non-blank runs skip the
+          results-branch push and critical-regression-alert steps below, so a
+          quick targeted check never corrupts the live dashboard or fires a
+          false regression alert for tests that simply didn't run this time.
+        required: false
+        default: ''
 
 jobs:
   smoke-tests:
@@ -139,12 +150,19 @@ jobs:
           TEST_PREAPPLICANT_PASSWORD: ${{ secrets.TEST_PREAPPLICANT_PASSWORD }}
           TEST_HTTP_USER: ${{ secrets.TEST_HTTP_USER }}
           TEST_HTTP_PASS: ${{ secrets.TEST_HTTP_PASS }}
+          PYTEST_MARKERS: ${{ github.event.inputs.pytest_markers }}
         # --video=on records every test; utils/prune_videos.py below then
         # deletes anything that doesn't earn a place per
         # docs/TESTING_REBUILD_SPEC.md Day 8 (critical tests always, everything
         # else only on failure) rather than varying --video per test, which
         # pytest-playwright doesn't support.
-        run: pytest --video=on --output=test-results --json-report --json-report-file=pytest-report.json -v
+        run: |
+          if [ -n "$PYTEST_MARKERS" ]; then
+            echo "Targeted run -- pytest -m \"$PYTEST_MARKERS\""
+            pytest -m "$PYTEST_MARKERS" --video=on --output=test-results --json-report --json-report-file=pytest-report.json -v
+          else
+            pytest --video=on --output=test-results --json-report --json-report-file=pytest-report.json -v
+          fi
         continue-on-error: true
 
       - name: Prune non-critical passing videos
@@ -154,6 +172,7 @@ jobs:
         run: python utils/reporter.py pytest-report.json
 
       - name: Check for critical state changes and alert
+        if: github.event.inputs.pytest_markers == ''
         env:
           TEST_BASE_URL: ${{ secrets.TEST_BASE_URL }}
           OWL_TEST_API_KEY: ${{ secrets.OWL_TEST_API_KEY }}
@@ -166,6 +185,7 @@ jobs:
           python utils/check_critical_regressions.py previous_results.json results.json pytest-report.json
 
       - name: Push results to results branch
+        if: github.event.inputs.pytest_markers == ''
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
